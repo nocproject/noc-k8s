@@ -1,16 +1,18 @@
 kind: Job
 apiVersion: batch/v1
 metadata:
-  name: db-init-migrate
+  name: collection-init
 spec:
   template:
     spec:
       containers:
-      - name: db-init
+      - name: collection-install
         image: registry.getnoc.com/noc/nocmc/stable:dev
         command:
-          - ./noc
-          - migrate
+          - /bin/sh
+          - -c
+        args:
+          - python ./scripts/deploy/install-packages requirements/collections.json && ./noc collection sync
         envFrom:
           - configMapRef:
               name: noc-configmap

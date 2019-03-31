@@ -1,16 +1,16 @@
 kind: Job
 apiVersion: batch/v1
 metadata:
-  name: db-init-migrate
+  name: db-sync-perms
 spec:
   template:
     spec:
       containers:
-      - name: db-init
+      - name: db-sync-perms
         image: registry.getnoc.com/noc/nocmc/stable:dev
         command:
           - ./noc
-          - migrate
+          - sync-perm
         envFrom:
           - configMapRef:
               name: noc-configmap

@@ -1,16 +1,16 @@
 kind: Job
 apiVersion: batch/v1
 metadata:
-  name: db-init-migrate
+  name: db-ensure
 spec:
   template:
     spec:
       containers:
-      - name: db-init
+      - name: db-ensure
         image: registry.getnoc.com/noc/nocmc/stable:dev
         command:
-          - ./noc
-          - migrate
+          - python
+          - commands/ensure-indexes.py
         envFrom:
           - configMapRef:
               name: noc-configmap
