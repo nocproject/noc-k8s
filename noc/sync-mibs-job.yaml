@@ -1,0 +1,20 @@
+kind: Job
+apiVersion: batch/v1
+metadata:
+  name: db-sync-mibs
+spec:
+  template:
+    spec:
+      containers:
+      - name: db-sync-mibs
+        image: registry.getnoc.com/noc/nocmc/stable:dev
+        command:
+          - ./noc
+          - sync-mibs
+        envFrom:
+          - configMapRef:
+              name: noc-configmap
+          - secretRef:
+              name: noc-secret
+      restartPolicy: Never
+  backoffLimit: 1
