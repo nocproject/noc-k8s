@@ -11,7 +11,10 @@ spec:
     matchLabels:
       service: card
   strategy:
-    type: Recreate
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
   template:
     metadata:
       labels:
@@ -26,12 +29,20 @@ spec:
               name: noc-configmap
           - secretRef:
               name: noc-secret
-        image: registry.getnoc.com/noc/nocmc/release-19.1:master
+        image: registry.getnoc.com/noc/nocmc/stable:code
+        imagePullPolicy: Always
         name: card
+        livenessProbe:
+          httpGet:
+            path: /mon/
+            port: 1200
+          initialDelaySeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /mon/
+            port: 1200
         resources:
           limits:
-            cpu: 10m
-            memory: 50Mi
+            memory: 150Mi
           requests:
-            cpu: 10m
-            memory: 50Mi
+            memory: 150Mi

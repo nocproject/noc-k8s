@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: card-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      auth_request /api/auth/auth/;
+      auth_request_set $user $upstream_http_remote_user;
+      proxy_set_header Remote-User $user;
+      auth_request_set $groups $upstream_http_remote_groups;
+      proxy_set_header Remote-Groups $groups;
+spec:
+  tls:
+    - hosts:
+        - noc-k8s.getnoc.com
+      secretName: tls-secret
+  rules:
+    - host: noc-k8s.getnoc.com
+      http:
+        paths:
+          - path: /api/card/
+            backend:
+              serviceName: card
+              servicePort: 1200
