@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+  labels:
+    service: nginx
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: nginx
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        service: nginx
+    spec:
+      containers:
+      - command:
+        image: registry.getnoc.com/noc/nocmc/stable:nginx
+        imagePullPolicy: Always
+        name: nginx
+        livenessProbe:
+          httpGet:
+            path: /ng_stats
+            port: 80
+          initialDelaySeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ng_stats
+            port: 80
+          initialDelaySeconds: 5
+        resources:
+          limits:
+            cpu: 10m
+            memory: 50Mi
+          requests:
+            cpu: 10m
+            memory: 50Mi
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - mountPath: /etc/nginx # mount nginx-conf volumn to /etc/nginx
+          readOnly: true
+          name: nginx-configmap
+      # Load the configuration files for nginx
+      volumes:
+      - name: nginx-configmap
+        configMap:
+          name: nginx-configmap # place ConfigMap `nginx-conf` on /etc/nginx
+          items:
+            - key: nginx.conf
+              path: nginx.conf
+            - key: noc.conf
+              path: conf.d/noc.conf # dig directory
+            - key: mime.types
+              path: mime.types
