@@ -1,0 +1,45 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: auth-login-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    ingress.kubernetes.io/proxy-redirect-to: "default"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      internal;
+      proxy_set_header Content-Length '0';
+spec:
+  tls:
+    - hosts:
+        - noc-k8s.getnoc.com
+      secretName: tls-secret
+  rules:
+    - host: noc-k8s.getnoc.com
+      http:
+        paths:
+          - path: /api/auth/
+            backend:
+              serviceName: login
+              servicePort: 1200
+
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: login-login-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  tls:
+    - hosts:
+        - noc-k8s.getnoc.com
+      secretName: tls-secret
+  rules:
+    - host: noc-k8s.getnoc.com
+      http:
+        paths:
+          - path: /api/login/
+            backend:
+              serviceName: login
+              servicePort: 1200
