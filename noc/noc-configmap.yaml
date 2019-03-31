@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: noc-configmap
+data:
+  NOC_CONFIG: "env:///NOC"
+  NOC_MONGO_ADDRESSES: "mongo-mongodb:27017"
+  NOC_PG_DB: noc
+  NOC_PG_ADDRESSES: "postgres-postgresql:5432"
+  NOC_FEATURES_CONSUL_HEALTHCHECKS: "false"
+  NOC_FEATURES_SERVICE_REGISTRATION: "false"
+  NOC_LISTEN: "auto:1200"

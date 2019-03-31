@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nsq-admin
+  labels:
+    app: nsq-admin
+spec:
+  ports:
+  - port: 4171
+    protocol: TCP
+    name: http
+    targetPort: 4171
+  selector:
+    app: nsq-admin

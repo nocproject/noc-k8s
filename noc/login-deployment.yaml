@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+  labels:
+    service: login
+  name: login
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: login
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        service: login
+    spec:
+      containers:
+      - command:
+        - python
+        - services/login/service.py
+        envFrom:
+          - configMapRef:
+              name: noc-configmap
+          - secretRef:
+              name: noc-secret
+        image: registry.getnoc.com/noc/nocmc/release-19.1:master
+        name: login
+        resources:
+          limits:
+            cpu: 10m
+            memory: 50Mi
+          requests:
+            cpu: 10m
+            memory: 50Mi

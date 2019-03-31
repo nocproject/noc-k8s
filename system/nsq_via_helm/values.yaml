@@ -1,0 +1,61 @@
+image:
+  registry: docker.io
+  repository: nsqio/nsq
+  tag: v1.0.0-compat
+
+lookupd:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 10m
+      memory: 50Mi
+    limits:
+      cpu: 10m
+      memory: 50Mi
+nsqd:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 10m
+      memory: 50Mi
+    limits:
+      cpu: 10m
+      memory: 50Mi
+admin:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 10m
+      memory: 50Mi
+    limits:
+      cpu: 10m
+      memory: 50Mi
+
+monitoring:
+  create: false
+
+rbac:
+  ## Specifies whether RBAC resources should be created
+  ##
+  create: true
+
+  role:
+    ## Rules to create. It follows the role specification
+    # rules:
+    #  - apiGroups:
+    #    - extensions
+    #    resources:
+    #      - podsecuritypolicies
+    #    verbs:
+    #      - use
+    #    resourceNames:
+    #      - gce.unprivileged
+    rules: []
+
+serviceAccount:
+  ## Specifies whether a ServiceAccount should be created
+  ##
+  create: true
+  ## The name of the ServiceAccount to use.
+  ## If not set and create is true, a name is generated using the fullname template
+  name:

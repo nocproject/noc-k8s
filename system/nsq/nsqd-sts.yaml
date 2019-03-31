@@ -1,0 +1,68 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nsq-nsqd
+  labels:
+    app: nsq-nsqd
+spec:
+  selector:
+    matchLabels:
+      app: nsq-nsqd
+      component: nsqd
+  serviceName: "nsqd"
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: nsq-nsqd
+        component: nsqd
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '9117'
+    spec:
+      containers:
+      - name: nsqd
+        image: docker.io/nsqio/nsq:v1.0.0-compat
+        volumeMounts:
+        - name: datadir
+          mountPath: /data
+        resources:
+          limits:
+            cpu: 10m
+            memory: 50Mi
+          requests:
+            cpu: 10m
+            memory: 50Mi
+        command:
+          - sh
+        args:
+          - -c
+          - |
+            /nsqd -data-path /data  \
+            -lookupd-tcp-address nsq-lookupd-0.nsq-lookupd:4161:4160 \
+            -mem-queue-size "50" \
+            -broadcast-address $HOSTNAME.nsqd
+        ports:
+        - name: tcp
+          containerPort: 4150
+          hostPort: 4150
+        - name: http
+          containerPort: 4151
+          hostPort: 4151
+        env:
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+  volumeClaimTemplates:
+  - metadata:
+      name: datadir
+    spec:
+      accessModes:
+        - "ReadWriteOnce"
+      storageClassName: hdd
+      resources:
+        requests:
+          storage: 50M
