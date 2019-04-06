@@ -29,9 +29,19 @@ data:
 
         keepalive_timeout  65;
 
+        include /etc/nginx/conf.d/hc.conf;
         include /etc/nginx/conf.d/noc.conf;
     }
+  hc.conf: |-
+    server {
+        # Healthcheck
+        listen 81;
 
+        location /ng_stats {
+            stub_status;
+            access_log off;
+        }
+    }
   noc.conf: |-
     server {
         listen 80 default_server reuseport;

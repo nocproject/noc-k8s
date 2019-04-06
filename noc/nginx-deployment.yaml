@@ -28,12 +28,12 @@ spec:
         livenessProbe:
           httpGet:
             path: /ng_stats
-            port: 80
+            port: 81
           initialDelaySeconds: 10
         readinessProbe:
           httpGet:
             path: /ng_stats
-            port: 80
+            port: 81
           initialDelaySeconds: 5
         resources:
           limits:
@@ -42,8 +42,6 @@ spec:
           requests:
             cpu: 10m
             memory: 50Mi
-        ports:
-        - containerPort: 80
         volumeMounts:
         - mountPath: /etc/nginx # mount nginx-conf volumn to /etc/nginx
           readOnly: true
@@ -57,6 +55,8 @@ spec:
             - key: nginx.conf
               path: nginx.conf
             - key: noc.conf
-              path: conf.d/noc.conf # dig directory
+              path: conf.d/noc.conf
+            - key: hc.conf
+              path: conf.d/hc.conf
             - key: mime.types
               path: mime.types
