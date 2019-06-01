@@ -29,7 +29,7 @@ spec:
               name: noc-configmap
           - secretRef:
               name: noc-secret
-        image: registry.getnoc.com/noc/nocmc/stable:code
+        image: registry.getnoc.com/noc/noc/code:19.2-dev
         imagePullPolicy: Always
         name: login
         livenessProbe:

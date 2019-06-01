@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - command:
-        image: registry.getnoc.com/noc/nocmc/stable:nginx
+        image: registry.getnoc.com/noc/noc/static:19.2-dev
         imagePullPolicy: Always
         name: nginx
         livenessProbe:
