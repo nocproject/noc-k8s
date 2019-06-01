@@ -20,8 +20,8 @@ kubectl apply -f system/nsq/
 kubectl apply -f system/clickhouse/
 
 #init dbs
-helm upgrade --install postgres stable/postgresql --values system/postgres/values.yaml
-helm upgrade --install mongo stable/mongodb --values system/mongo/values.yaml
+helm upgrade --install postgres stable/postgresql --atomic --values system/postgres/values.yaml
+helm upgrade --install mongo stable/mongodb --atomic  --values system/mongo/values.yaml
 
 # go and get your oun tls cert fir ingress https://kubernetes.io/docs/concepts/services-networking/ingress/#tls
 kubectl apply -f system/tls-secret.yaml
