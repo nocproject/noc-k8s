@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+  labels:
+    service: login
+  name: login
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: login
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        service: login
+    spec:
+      containers:
+      - command:
+        - sleep
+        - "10000"
+        envFrom:
+          - configMapRef:
+              name: noc-configmap
+          - secretRef:
+              name: noc-secret
+        image: nginx:alpine
+        imagePullPolicy: Always
+        name: login
+        resources:
+          limits:
+            memory: 150Mi
+          requests:
+            memory: 150Mi
