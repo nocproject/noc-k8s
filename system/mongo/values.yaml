@@ -30,7 +30,7 @@ usePassword: true
 ## MongoDB admin password
 ## ref: https://github.com/bitnami/bitnami-docker-mongodb/blob/master/README.md#setting-the-root-password-on-first-run
 ##
-# mongodbRootPassword:
+mongodbRootPassword: noc
 
 ## MongoDB custom user and database
 ## ref: https://github.com/bitnami/bitnami-docker-mongodb/blob/master/README.md#creating-a-user-and-database-on-first-run
@@ -45,7 +45,7 @@ mongodbDatabase: noc
 ##
 ## mongodbExtraFlags:
 ##  - "--wiredTigerCacheSizeGB=2"
-mongodbExtraFlags: ["--nojournal" ]
+mongodbExtraFlags: ["--wiredTigerCacheSizeGB=2" ]
 
 ## Pod Security Context
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
@@ -71,7 +71,7 @@ replicaSet:
   enabled: false
   ## Name of the replica set
   ##
-  name: rs0
+  name: noc
 
   ## Key used for replica set authentication
   ##
@@ -114,7 +114,7 @@ affinity: {}
 
 ## Tolerations
 ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-tolerations: [NoSchedule]
+#tolerations: [NoSchedule]
 
 ## Enable persistence using Persistent Volume Claims
 ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
@@ -133,7 +133,7 @@ persistence:
   ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
   ##   GKE, AWS & OpenStack)
   ##
-  storageClass: "hdd"
+  #storageClass: "hdd"
   accessModes:
     - ReadWriteOnce
   size: 1Gi
