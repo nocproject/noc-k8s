@@ -62,7 +62,7 @@ spec:
     spec:
       accessModes:
         - "ReadWriteOnce"
-      storageClassName: hdd
+      #storageClassName: 
       resources:
         requests:
-          storage: 50M
+          storage: 64Mi
