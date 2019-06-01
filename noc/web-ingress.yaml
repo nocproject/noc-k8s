@@ -3,8 +3,14 @@ kind: Ingress
 metadata:
   name: web-ingress
   annotations:
-    kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/configuration-snippet: |
+      rewrite ^/$ /main/desktop/;
+      auth_request /api/auth/auth/;
+      auth_request_set $user $upstream_http_remote_user;
+      proxy_set_header Remote-User $user;
+      auth_request_set $groups $upstream_http_remote_groups;
+      proxy_set_header Remote-Groups $groups;
+    nginx.org/location-snippets: |
       rewrite ^/$ /main/desktop/;
       auth_request /api/auth/auth/;
       auth_request_set $user $upstream_http_remote_user;

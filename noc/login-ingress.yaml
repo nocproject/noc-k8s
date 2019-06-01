@@ -3,9 +3,11 @@ kind: Ingress
 metadata:
   name: auth-login-ingress
   annotations:
-    kubernetes.io/ingress.class: "nginx"
     ingress.kubernetes.io/proxy-redirect-to: "default"
     nginx.ingress.kubernetes.io/configuration-snippet: |
+      internal;
+      proxy_set_header Content-Length '0';
+    nginx.org/location-snippets: |
       internal;
       proxy_set_header Content-Length '0';
 spec:
