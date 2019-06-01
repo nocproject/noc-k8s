@@ -6,7 +6,8 @@ In extremely early stage
 
 read `run.sh` for more details.
 
-run_yandex sholud init yandex kubernetes if you already has one. 
+run_yandex sholud init yandex kubernetes if you already has one.
+teadown.sh -- should do its best to delete everyting  
 
 
 WARNING
