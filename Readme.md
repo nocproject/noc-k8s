@@ -37,7 +37,11 @@ for now scope of project reduced to
 K3s specific notes
 ==================
 
-to enable metrics server you have to patch 
+fisrt of all you need a volume.
+
+`run_k3s.sh` will do it for you. 
+
+* to enable metrics server you have to patch 
 `/etc/systemd/system/k3s.service`
 and add 
 ```
