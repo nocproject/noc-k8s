@@ -64,8 +64,8 @@ spec:
             port: 9000
         resources:
           requests:
-            cpu: 200m
-            memory: 512Mi
+            #cpu: 200m
+            memory: 256Mi
           limits:
             cpu: 4
             memory: 8Gi
