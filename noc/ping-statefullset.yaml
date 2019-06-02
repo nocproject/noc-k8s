@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   annotations:
   labels:
@@ -10,11 +10,7 @@ spec:
   selector:
     matchLabels:
       service: ping
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 1
+  serviceName: "ping"
   template:
     metadata:
       labels:
@@ -33,7 +29,6 @@ spec:
           - name: NOC_POOL
             value: default
         image: registry.getnoc.com/noc/noc/code:19.2-dev
-
         imagePullPolicy: Always
         name: ping
         livenessProbe:
