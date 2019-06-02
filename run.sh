@@ -23,6 +23,8 @@ kubectl apply -f system/clickhouse/
 helm upgrade --install postgres stable/postgresql --atomic --values system/postgres/values.yaml
 helm upgrade --install mongo stable/mongodb --atomic  --values system/mongo/values.yaml
 
+kubectl apply -f system/metrics_server_k3s/
+
 # go and get your oun tls cert fir ingress https://kubernetes.io/docs/concepts/services-networking/ingress/#tls
 kubectl apply -f system/tls-secret.yaml
 

@@ -32,3 +32,16 @@ for now scope of project reduced to
 - noc restrictions
   - only one pool -- default. routing relies only on host machines. because there no good way to assign 
   - only single discovery and ping process. that is because locks and semaphores relies on consul. but there are no consul
+
+
+K3s specific notes
+==================
+
+to enable metrics server you have to patch 
+`/etc/systemd/system/k3s.service`
+and add 
+```
+ExecStart=/usr/local/bin/k3s server --kubelet-arg="address=0.0.0.0"
+```
+to the end of ExecStart
+ `--kubelet-arg="address=0.0.0.0"` 
