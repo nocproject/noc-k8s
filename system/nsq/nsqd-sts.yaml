@@ -30,10 +30,10 @@ spec:
           mountPath: /data
         resources:
           limits:
-            cpu: 10m
+            cpu: 50m
             memory: 50Mi
           requests:
-            cpu: 10m
+            #cpu: 10m
             memory: 50Mi
         command:
           - sh
@@ -62,7 +62,7 @@ spec:
     spec:
       accessModes:
         - "ReadWriteOnce"
-      #storageClassName: 
+      #storageClassName:
       resources:
         requests:
           storage: 64Mi
