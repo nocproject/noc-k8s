@@ -6,7 +6,6 @@ metadata:
   labels:
     app: nsqd
 spec:
-  clusterIP: None
   ports:
   - port: 4150
     protocol: TCP
@@ -17,4 +16,4 @@ spec:
     name: http
     targetPort: 4151
   selector:
-    app: nsqd
+    app: nsq-nsqd
