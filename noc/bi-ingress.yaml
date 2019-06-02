@@ -1,0 +1,30 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: bi-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      auth_request /api/auth/auth/;
+      auth_request_set $user $upstream_http_remote_user;
+      proxy_set_header Remote-User $user;
+      auth_request_set $groups $upstream_http_remote_groups;
+      proxy_set_header Remote-Groups $groups;
+    nginx.org/location-snippets: |
+      auth_request /api/auth/auth/;
+      auth_request_set $user $upstream_http_remote_user;
+      proxy_set_header Remote-User $user;
+      auth_request_set $groups $upstream_http_remote_groups;
+      proxy_set_header Remote-Groups $groups;
+spec:
+  tls:
+    - hosts:
+        - noc-k8s.getnoc.com
+      secretName: tls-secret
+  rules:
+    - host: noc-k8s.getnoc.com
+      http:
+        paths:
+          - path: /api/bi/
+            backend:
+              serviceName: bi
+              servicePort: 1200

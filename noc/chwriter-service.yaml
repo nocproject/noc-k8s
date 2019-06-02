@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chwriter
+  labels:
+    service: chwriter
+spec:
+  ports:
+  - port: 1200
+    protocol: TCP
+    name: http
+    targetPort: 1200
+  selector:
+    service: chwriter

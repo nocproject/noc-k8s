@@ -43,6 +43,8 @@ spec:
             port: 1200
         resources:
           limits:
+            #cpu: 500m
             memory: 150Mi
           requests:
+            #cpu: 500m
             memory: 150Mi

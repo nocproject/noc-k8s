@@ -3,13 +3,13 @@ kind: Deployment
 metadata:
   annotations:
   labels:
-    service: web
-  name: web
+    service: syslogcollector
+  name: syslogcollector
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: web
+      service: syslogcollector
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -18,20 +18,23 @@ spec:
   template:
     metadata:
       labels:
-        service: web
+        service: syslogcollector
     spec:
       containers:
       - command:
         - python
-        - services/web/service.py
+        - services/syslogcollector/service.py
         envFrom:
           - configMapRef:
               name: noc-configmap
           - secretRef:
               name: noc-secret
+        env:
+          - name: NOC_POOL
+            value: default
         image: registry.getnoc.com/noc/noc/code:19.2-dev
         imagePullPolicy: Always
-        name: web
+        name: syslogcollector
         livenessProbe:
           httpGet:
             path: /mon/
@@ -43,7 +46,8 @@ spec:
             port: 1200
         resources:
           limits:
-            #cpu: 1
-            memory: 120Mi
+            #cpu: 500m
+            memory: 80Mi
           requests:
-            memory: 120Mi
+            #cpu: 500m
+            memory: 80Mi

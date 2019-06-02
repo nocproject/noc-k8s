@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: discovery
+  labels:
+    service: discovery
+spec:
+  ports:
+  - port: 1200
+    protocol: TCP
+    name: http
+    targetPort: 1200
+  selector:
+    service: discovery

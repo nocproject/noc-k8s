@@ -3,13 +3,13 @@ kind: Deployment
 metadata:
   annotations:
   labels:
-    service: web
-  name: web
+    service: scheduler
+  name: scheduler
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: web
+      service: scheduler
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -18,12 +18,12 @@ spec:
   template:
     metadata:
       labels:
-        service: web
+        service: scheduler
     spec:
       containers:
       - command:
         - python
-        - services/web/service.py
+        - services/scheduler/service.py
         envFrom:
           - configMapRef:
               name: noc-configmap
@@ -31,7 +31,7 @@ spec:
               name: noc-secret
         image: registry.getnoc.com/noc/noc/code:19.2-dev
         imagePullPolicy: Always
-        name: web
+        name: scheduler
         livenessProbe:
           httpGet:
             path: /mon/
@@ -43,7 +43,8 @@ spec:
             port: 1200
         resources:
           limits:
-            #cpu: 1
-            memory: 120Mi
+            #cpu: 100m
+            memory: 150Mi
           requests:
-            memory: 120Mi
+            #cpu: 100m
+            memory: 150Mi

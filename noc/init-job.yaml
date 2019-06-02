@@ -8,8 +8,8 @@ spec:
       containers:
       - name: init
         image: registry.getnoc.com/noc/noc/dev:19.2-dev
-        command: 
-          - "sh" 
+        command:
+          - "sh"
           - "-c"
           - >
             set -xe
@@ -34,7 +34,7 @@ spec:
             cpu: 1
             memory: 250Mi
           requests:
-            cpu: 1
+            #cpu: 1
             memory: 250Mi
       restartPolicy: Never
   backoffLimit: 1
