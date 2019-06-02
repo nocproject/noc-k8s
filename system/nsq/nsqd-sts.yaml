@@ -18,22 +18,19 @@ spec:
       labels:
         app: nsq-nsqd
         component: nsqd
-      annotations:
-        prometheus.io/scrape: 'true'
-        prometheus.io/port: '9117'
     spec:
       containers:
       - name: nsqd
-        image: docker.io/nsqio/nsq:v1.0.0-compat
+        image: docker.io/nsqio/nsq:v1.1.0
         volumeMounts:
         - name: datadir
           mountPath: /data
         resources:
           limits:
-            cpu: 50m
+            cpu: 500m
             memory: 50Mi
           requests:
-            #cpu: 10m
+            cpu: 10m
             memory: 50Mi
         command:
           - sh
@@ -41,9 +38,8 @@ spec:
           - -c
           - |
             /nsqd -data-path /data  \
-            -lookupd-tcp-address nsq-lookupd-0.nsq-lookupd:4161:4160 \
-            -mem-queue-size "50" \
-            -broadcast-address $HOSTNAME.nsqd
+            -lookupd-tcp-address nsq-lookupd-0.nsq-lookupd:4160 \
+            -mem-queue-size "10000"
         ports:
         - name: tcp
           containerPort: 4150
@@ -62,7 +58,6 @@ spec:
     spec:
       accessModes:
         - "ReadWriteOnce"
-      #storageClassName:
       resources:
         requests:
           storage: 64Mi

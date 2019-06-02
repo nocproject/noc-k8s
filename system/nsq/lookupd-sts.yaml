@@ -37,14 +37,14 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: nsqlookupd
-        image: docker.io/nsqio/nsq:v1.0.0-compat
+        image: docker.io/nsqio/nsq:v1.1.0
         imagePullPolicy: Always
         resources:
           limits:
-            cpu: 50m
+            cpu: 150m
             memory: 50Mi
           requests:
-            #cpu: 10m
+            cpu: 10m
             memory: 50Mi
         command:
         - /nsqlookupd

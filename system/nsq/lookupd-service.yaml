@@ -6,6 +6,7 @@ metadata:
   labels:
     app: nsq-lookupd
 spec:
+  clusterIP: None
   ports:
   - port: 4160
     protocol: TCP

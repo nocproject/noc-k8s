@@ -30,7 +30,7 @@ spec:
               topologyKey: kubernetes.io/hostname
       containers:
       - name: nsq-admin
-        image: docker.io/nsqio/nsq:v1.0.0-compat
+        image: docker.io/nsqio/nsq:v1.1.0
         livenessProbe:
           httpGet:
             path: /ping
@@ -46,7 +46,7 @@ spec:
             cpu: 50m
             memory: 50Mi
           requests:
-            #cpu: 10m
+            cpu: 10m
             memory: 50Mi
         command:
           - /nsqadmin
