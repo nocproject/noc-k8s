@@ -64,11 +64,11 @@ spec:
             port: 9000
         resources:
           requests:
-            #cpu: 200m
+            cpu: 200m
             memory: 256Mi
           limits:
-            cpu: 4
-            memory: 8Gi
+            cpu: 2
+            memory: 11Gi
         volumeMounts:
           - mountPath: /var/lib/clickhouse/
             name: ch-datadir
