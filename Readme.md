@@ -28,10 +28,8 @@ Scope of current development
 for now scope of project reduced to
 - run dbs in single server mode without any ha. but persist db data to disks
 - run nsqd in single server mode
-- no consul. 
 - noc restrictions
-  - only one pool -- default. routing relies only on host machines. because there no good way to assign 
-  - only single discovery and ping process. that is because locks and semaphores relies on consul. but there are no consul
+  - only one pool -- default. routing relies only on host machines. because there no good way to assign node to 
 
 
 K3s specific notes
