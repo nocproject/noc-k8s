@@ -19,6 +19,7 @@ spec:
       labels:
         service: discovery
     spec:
+      terminationGracePeriodSeconds: 30
       containers:
       - command:
         - python

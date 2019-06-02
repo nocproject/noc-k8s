@@ -16,6 +16,7 @@ spec:
       labels:
         service: ping
     spec:
+      terminationGracePeriodSeconds: 30
       containers:
       - command:
         - python

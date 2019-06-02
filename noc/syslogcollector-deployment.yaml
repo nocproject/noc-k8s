@@ -20,6 +20,7 @@ spec:
       labels:
         service: syslogcollector
     spec:
+      terminationGracePeriodSeconds: 30
       containers:
       - command:
         - python
@@ -46,7 +47,7 @@ spec:
             port: 1200
         resources:
           limits:
-            cpu: 500m
+            cpu: 200m
             memory: 80Mi
           requests:
             cpu: 50m

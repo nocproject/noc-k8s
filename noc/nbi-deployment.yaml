@@ -20,6 +20,7 @@ spec:
       labels:
         service: nbi
     spec:
+      terminationGracePeriodSeconds: 30
       containers:
       - command:
         - python
