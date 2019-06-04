@@ -3,13 +3,13 @@ kind: Deployment
 metadata:
   annotations:
   labels:
-    service: activator
-  name: activator
+    service: activator-default
+  name: activator-default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: activator
+      service: activator-default
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -18,7 +18,7 @@ spec:
   template:
     metadata:
       labels:
-        service: activator
+        service: activator-default
     spec:
       terminationGracePeriodSeconds: 30
       containers:
@@ -35,7 +35,7 @@ spec:
             value: default
         image: registry.getnoc.com/noc/noc/code:19.2-dev
         imagePullPolicy: Always
-        name: activator
+        name: activator-default
         livenessProbe:
           httpGet:
             path: /mon/
