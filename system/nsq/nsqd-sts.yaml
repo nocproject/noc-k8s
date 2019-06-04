@@ -39,7 +39,8 @@ spec:
           - |
             /nsqd -data-path /data  \
             -lookupd-tcp-address nsq-lookupd-0.nsq-lookupd:4160 \
-            -mem-queue-size "10000"
+            -mem-queue-size "10000" \
+            -broadcast-address ${HOSTNAME}.nsqd
         ports:
         - name: tcp
           containerPort: 4150
