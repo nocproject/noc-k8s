@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+  labels:
+    service: front-nginx
+  name: front-nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: front-nginx
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        service: front-nginx
+    spec:
+      containers:
+      - command:
+        image: nginx:mainline-alpine
+        imagePullPolicy: Always
+        name: front-nginx
+        livenessProbe:
+          httpGet:
+            path: /ng_stats
+            port: 81
+          initialDelaySeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ng_stats
+            port: 81
+          initialDelaySeconds: 5
+        resources:
+          limits:
+            cpu: 500m
+            memory: 50Mi
+          requests:
+            cpu: 10m
+            memory: 50Mi
+        volumeMounts:
+        - mountPath: /etc/nginx # mount nginx-conf volumn to /etc/nginx
+          readOnly: true
+          name: front-nginx-configmap
+      # Load the configuration files for nginx
+      volumes:
+      - name: front-nginx-configmap
+        configMap:
+          name: front-nginx-configmap # place ConfigMap `nginx-conf` on /etc/nginx
+          items:
+            - key: nginx.conf
+              path: nginx.conf
+            - key: noc.conf
+              path: conf.d/noc.conf
+            - key: upstream.conf
+              path: upstream.conf
+            - key: hc.conf
+              path: conf.d/hc.conf
+            - key: mime.types
+              path: mime.types

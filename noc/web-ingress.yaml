@@ -17,6 +17,7 @@ metadata:
       proxy_set_header Remote-User $user;
       auth_request_set $groups $upstream_http_remote_groups;
       proxy_set_header Remote-Groups $groups;
+    traefik.ingress.kubernetes.io/app-root: "/main/desktop/"
 spec:
   tls:
     - hosts:
@@ -26,7 +27,7 @@ spec:
     - host: noc-k8s.getnoc.com
       http:
         paths:
-          - path: /
+          - path: /api/web/
             backend:
               serviceName: web
               servicePort: 1200
