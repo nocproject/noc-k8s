@@ -23,33 +23,33 @@ spec:
     spec:
       terminationGracePeriodSeconds: 30
       containers:
-      - command:
-        - python
-        - services/syslogcollector/service.py
-        envFrom:
-          - configMapRef:
-              name: noc-configmap
-          - secretRef:
-              name: noc-secret
-        env:
-          - name: NOC_POOL
-            value: default
-        image: registry.getnoc.com/noc/noc/code:19.2-dev
-        imagePullPolicy: Always
-        name: syslogcollector
-        livenessProbe:
-          httpGet:
-            path: /mon/
-            port: 1200
-          initialDelaySeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /mon/
-            port: 1200
-        resources:
-          limits:
-            cpu: 200m
-            memory: 80Mi
-          requests:
-            cpu: 50m
-            memory: 80Mi
+        - command:
+            - python
+            - services/syslogcollector/service.py
+          envFrom:
+            - configMapRef:
+                name: noc-configmap
+            - secretRef:
+                name: noc-secret
+          env:
+            - name: NOC_POOL
+              value: default
+          image: registry.getnoc.com/noc/noc/code:19.2-dev
+          imagePullPolicy: Always
+          name: syslogcollector
+          livenessProbe:
+            httpGet:
+              path: /mon/
+              port: 1200
+            initialDelaySeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /mon/
+              port: 1200
+          resources:
+            limits:
+              cpu: 200m
+              memory: 80Mi
+            requests:
+              cpu: 50m
+              memory: 80Mi

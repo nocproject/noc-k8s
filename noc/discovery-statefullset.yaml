@@ -22,33 +22,33 @@ spec:
     spec:
       terminationGracePeriodSeconds: 30
       containers:
-      - command:
-        - python
-        - services/discovery/service.py
-        envFrom:
-          - configMapRef:
-              name: noc-configmap
-          - secretRef:
-              name: noc-secret
-        env:
-          - name: NOC_POOL
-            value: default
-        image: registry.getnoc.com/noc/noc/code:19.2-dev
-        imagePullPolicy: Always
-        name: discovery
-        livenessProbe:
-          httpGet:
-            path: /mon/
-            port: 1200
-          initialDelaySeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /mon/
-            port: 1200
-        resources:
-          limits:
-            cpu: 1
-            memory: 150Mi
-          requests:
-            cpu: 50m
-            memory: 150Mi
+        - command:
+            - python
+            - services/discovery/service.py
+          envFrom:
+            - configMapRef:
+                name: noc-configmap
+            - secretRef:
+                name: noc-secret
+          env:
+            - name: NOC_POOL
+              value: default
+          image: registry.getnoc.com/noc/noc/code:19.2-dev
+          imagePullPolicy: Always
+          name: discovery
+          livenessProbe:
+            httpGet:
+              path: /mon/
+              port: 1200
+            initialDelaySeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /mon/
+              port: 1200
+          resources:
+            limits:
+              cpu: 1
+              memory: 150Mi
+            requests:
+              cpu: 50m
+              memory: 150Mi

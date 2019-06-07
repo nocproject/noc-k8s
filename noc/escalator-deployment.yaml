@@ -22,30 +22,30 @@ spec:
         service: escalator
     spec:
       containers:
-      - command:
-        - python
-        - services/escalator/service.py
-        envFrom:
-          - configMapRef:
-              name: noc-configmap
-          - secretRef:
-              name: noc-secret
-        image: registry.getnoc.com/noc/noc/code:19.2-dev
-        imagePullPolicy: Always
-        name: escalator
-        livenessProbe:
-          httpGet:
-            path: /mon/
-            port: 1200
-          initialDelaySeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /mon/
-            port: 1200
-        resources:
-          limits:
-            #cpu: 100m
-            memory: 90Mi
-          requests:
-            #cpu: 100m
-            memory: 90Mi
+        - command:
+            - python
+            - services/escalator/service.py
+          envFrom:
+            - configMapRef:
+                name: noc-configmap
+            - secretRef:
+                name: noc-secret
+          image: registry.getnoc.com/noc/noc/code:19.2-dev
+          imagePullPolicy: Always
+          name: escalator
+          livenessProbe:
+            httpGet:
+              path: /mon/
+              port: 1200
+            initialDelaySeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /mon/
+              port: 1200
+          resources:
+            limits:
+              cpu: 100m
+              memory: 90Mi
+            requests:
+              cpu: 100m
+              memory: 90Mi

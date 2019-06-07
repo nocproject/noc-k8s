@@ -19,7 +19,8 @@ data:
         include       /etc/nginx/mime.types;
         default_type  application/octet-stream;
 
-        log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+        log_format  main  '$remote_addr - $remote_user '
+                          '[$time_local] "$request" '
                           '$status $body_bytes_sent "$http_referer" '
                           '"$http_user_agent" "$http_x_forwarded_for"';
 
@@ -58,21 +59,24 @@ data:
         location ^~ /media/ {
             alias /usr/lib/python2.7/site-packages/django/contrib/admin/static/;
             gzip on;
-            gzip_types text/css text/javascript application/x-javascript application/json text/x-js application/javascript;
+            gzip_types text/css text/javascript application/x-javascript;
+            gzip_types application/json text/x-js application/javascript;
         }
 
         # UI files
         location ^~ /ui/ {
             alias /opt/noc/ui/;
             gzip on;
-            gzip_types text/css text/javascript application/x-javascript application/json text/x-js application/javascript;
+            gzip_types text/css text/javascript application/x-javascript;
+            gzip_types application/json text/x-js application/javascript;
         }
 
         location /ui/bi/editor/ {
             alias /opt/noc/ui/bi/;
             try_files $uri /index.html =404;
             gzip on;
-            gzip_types text/css text/javascript application/x-javascript application/json;
+            gzip_types text/css text/javascript application/x-javascript;
+            gzip_types application/json text/x-js application/javascript;
         }
     }
 

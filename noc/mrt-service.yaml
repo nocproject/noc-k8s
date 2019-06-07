@@ -7,9 +7,9 @@ metadata:
     service: mrt
 spec:
   ports:
-  - port: 1200
-    protocol: TCP
-    name: http
-    targetPort: 1200
+    - port: 1200
+      protocol: TCP
+      name: http
+      targetPort: 1200
   selector:
     service: mrt

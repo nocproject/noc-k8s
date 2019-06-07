@@ -23,30 +23,30 @@ spec:
     spec:
       terminationGracePeriodSeconds: 30
       containers:
-      - command:
-        - python
-        - services/grafanads/service.py
-        envFrom:
-          - configMapRef:
-              name: noc-configmap
-          - secretRef:
-              name: noc-secret
-        image: registry.getnoc.com/noc/noc/code:19.2-dev
-        imagePullPolicy: Always
-        name: grafanads
-        livenessProbe:
-          httpGet:
-            path: /mon/
-            port: 1200
-          initialDelaySeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /mon/
-            port: 1200
-        resources:
-          limits:
-            cpu: 100m
-            memory: 110Mi
-          requests:
-            cpu: 50m
-            memory: 110Mi
+        - command:
+            - python
+            - services/grafanads/service.py
+          envFrom:
+            - configMapRef:
+                name: noc-configmap
+            - secretRef:
+                name: noc-secret
+          image: registry.getnoc.com/noc/noc/code:19.2-dev
+          imagePullPolicy: Always
+          name: grafanads
+          livenessProbe:
+            httpGet:
+              path: /mon/
+              port: 1200
+            initialDelaySeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /mon/
+              port: 1200
+          resources:
+            limits:
+              cpu: 100m
+              memory: 110Mi
+            requests:
+              cpu: 50m
+              memory: 110Mi

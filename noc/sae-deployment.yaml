@@ -23,30 +23,30 @@ spec:
     spec:
       terminationGracePeriodSeconds: 30
       containers:
-      - command:
-        - python
-        - services/sae/service.py
-        envFrom:
-          - configMapRef:
-              name: noc-configmap
-          - secretRef:
-              name: noc-secret
-        image: registry.getnoc.com/noc/noc/code:19.2-dev
-        imagePullPolicy: Always
-        name: sae
-        livenessProbe:
-          httpGet:
-            path: /mon/
-            port: 1200
-          initialDelaySeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /mon/
-            port: 1200
-        resources:
-          limits:
-            cpu: 500m
-            memory: 85Mi
-          requests:
-            cpu: 50m
-            memory: 85Mi
+        - command:
+            - python
+            - services/sae/service.py
+          envFrom:
+            - configMapRef:
+                name: noc-configmap
+            - secretRef:
+                name: noc-secret
+          image: registry.getnoc.com/noc/noc/code:19.2-dev
+          imagePullPolicy: Always
+          name: sae
+          livenessProbe:
+            httpGet:
+              path: /mon/
+              port: 1200
+            initialDelaySeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /mon/
+              port: 1200
+          resources:
+            limits:
+              cpu: 500m
+              memory: 85Mi
+            requests:
+              cpu: 50m
+              memory: 85Mi

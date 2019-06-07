@@ -21,43 +21,43 @@ spec:
       labels:
         service: nginx
     spec:
-      containers:
-      - command:
-        image: registry.getnoc.com/noc/noc/static:19.2-dev
-        imagePullPolicy: Always
-        name: nginx
-        livenessProbe:
-          httpGet:
-            path: /ng_stats
-            port: 81
-          initialDelaySeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /ng_stats
-            port: 81
-          initialDelaySeconds: 5
-        resources:
-          limits:
-            cpu: 10m
-            memory: 50Mi
-          requests:
-            cpu: 10m
-            memory: 50Mi
-        volumeMounts:
-        - mountPath: /etc/nginx # mount nginx-conf volumn to /etc/nginx
-          readOnly: true
-          name: nginx-configmap
       # Load the configuration files for nginx
       volumes:
-      - name: nginx-configmap
-        configMap:
-          name: nginx-configmap # place ConfigMap `nginx-conf` on /etc/nginx
-          items:
-            - key: nginx.conf
-              path: nginx.conf
-            - key: noc.conf
-              path: conf.d/noc.conf
-            - key: hc.conf
-              path: conf.d/hc.conf
-            - key: mime.types
-              path: mime.types
+        - name: nginx-configmap
+          configMap:
+            name: nginx-configmap  # place `nginx-conf` on /etc/nginx
+            items:
+              - key: nginx.conf
+                path: nginx.conf
+              - key: noc.conf
+                path: conf.d/noc.conf
+              - key: hc.conf
+                path: conf.d/hc.conf
+              - key: mime.types
+                path: mime.types
+      containers:
+        - command:
+          image: registry.getnoc.com/noc/noc/static:19.2-dev
+          imagePullPolicy: Always
+          name: nginx
+          livenessProbe:
+            httpGet:
+              path: /ng_stats
+              port: 81
+            initialDelaySeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ng_stats
+              port: 81
+            initialDelaySeconds: 5
+          resources:
+            limits:
+              cpu: 10m
+              memory: 50Mi
+            requests:
+              cpu: 10m
+              memory: 50Mi
+          volumeMounts:
+            - mountPath: /etc/nginx  # mount nginx-conf volumn to /etc/nginx
+              readOnly: true
+              name: nginx-configmap
