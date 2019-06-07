@@ -6,6 +6,8 @@ metadata:
 spec:
   template:
     spec:
+      securityContext:
+        runAsUser: 1200
       restartPolicy: Never
       containers:
         - name: init
@@ -18,15 +20,12 @@ spec:
               && /usr/bin/python ./commands/migrate.py
               && ./noc ensure-indexes
               && /usr/bin/python ./commands/migrate-ch.py
-              && /usr/bin/python ./scripts/deploy/install-packages
-                requirements/collections.json
+              && /usr/bin/python ./scripts/deploy/install-packages requirements/collections.json
               && ./noc collection sync
               && ./noc sync-perm
               && ./noc sync-mibs
               && mkdir -p /opt/noc/etc
-              && echo
-                'cG9vbHM6CiAgZGVmYXVsdDoKICAgIGRlc2NyaXB0aW9uOiBkZWZhdWx0Cg=='
-                |base64 -d > /opt/noc/etc/noc.yml
+              && echo 'cG9vbHM6CiAgZGVmYXVsdDoKICAgIGRlc2NyaXB0aW9uOiBkZWZhdWx0Cg==' |base64 -d > /opt/noc/etc/noc.yml
               && cat /opt/noc/etc/noc.yml
               && /usr/bin/python ./scripts/deploy/apply-pools
           envFrom:
@@ -34,6 +33,9 @@ spec:
                 name: noc-configmap
             - secretRef:
                 name: noc-secret
+          env:
+            - name: NOC_PATH_NPKG_ROOT
+              value: /tmp
           resources:
             limits:
               cpu: 1

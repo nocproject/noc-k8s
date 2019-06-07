@@ -17,6 +17,9 @@ spec:
       labels:
         service: ping
     spec:
+      #  @todo investigate how to set NET_RAW for python script
+#      securityContext:
+#        runAsUser: 1200
       terminationGracePeriodSeconds: 30
       containers:
         - command:
@@ -31,6 +34,11 @@ spec:
             - name: NOC_POOL
               value: default
           image: registry.getnoc.com/noc/noc/code:19.2-dev
+          #  @todo investigate how to set NET_RAW for python script
+#          securityContext:
+#            capabilities:
+#              add:
+#                - NET_RAW
           imagePullPolicy: Always
           name: ping
           livenessProbe:

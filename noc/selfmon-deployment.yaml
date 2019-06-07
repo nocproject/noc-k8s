@@ -21,6 +21,8 @@ spec:
       labels:
         service: selfmon
     spec:
+      securityContext:
+        runAsUser: 1200
       terminationGracePeriodSeconds: 30
       containers:
         - command:
