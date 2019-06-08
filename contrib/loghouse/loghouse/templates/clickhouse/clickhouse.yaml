@@ -1,0 +1,110 @@
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: clickhouse-server
+  namespace: {{ .Release.Namespace }}
+spec:
+  revisionHistoryLimit: 1
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        component: clickhouse
+    spec:
+      securityContext:
+        runAsUser: 105
+        fsGroup: 106
+      initContainers:
+      - name: config
+        image: alpine:3.6
+        command:
+          - '/bin/sh'
+          - '-c'
+          - cd /etc/clickhouse-server;
+            ln -sf /etc/clickhouse-server-config/config.xml;
+            ln -sf /etc/clickhouse-server-config/users.xml
+        volumeMounts:
+        - mountPath: /etc/clickhouse-server/
+          name: config-directory
+        - mountPath: /etc/clickhouse-server-config/
+          name: config-volume
+      containers:
+      - name: clickhouse
+        image: flant/loghouse-clickhouse:{{ template "app.version" $ }}
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        ports:
+        - name: http
+          containerPort: 8123
+        - name: native
+          containerPort: 9000
+        env:
+        - name: CLICKHOUSE_SERVER
+          value: {{ .Values.clickhouse.server | quote }}
+        - name: CLICKHOUSE_PORT
+          value: {{ .Values.clickhouse.port | quote }}
+        - name: CLICKHOUSE_USER
+          value: {{ .Values.clickhouse.user | quote }}
+        - name: CLICKHOUSE_PASS
+          value: {{ .Values.clickhouse_pass_original | quote }}
+        - name: CLICKHOUSE_DB
+          value: {{ .Values.clickhouse.db | quote }}
+        - name: K8S_LOGS_TABLE
+          value: {{ .Values.clickhouse.table | quote }}
+        livenessProbe:
+          timeoutSeconds: 1
+          initialDelaySeconds: 30
+          tcpSocket:
+            port: 9000
+        readinessProbe:
+          timeoutSeconds: 1
+          initialDelaySeconds: 5
+          tcpSocket:
+            port: 9000
+        resources:
+          requests:
+            cpu: {{ .Values.clickhouse.resources.requests.cpu }}
+            memory: {{ .Values.clickhouse.resources.requests.memory }}
+          limits:
+            cpu: {{ .Values.clickhouse.resources.limits.cpu }}
+            memory: {{ .Values.clickhouse.resources.limits.memory }}
+        volumeMounts:
+{{- if .Values.storage.pvc }}
+          - name: {{ .Values.storage.pvc.name }}
+            mountPath: /var/lib/clickhouse/
+{{- end }}
+          - mountPath: /etc/clickhouse-server/
+            name: config-directory
+          - mountPath: /etc/clickhouse-server-config/
+            name: config-volume
+      volumes:
+{{- if .Values.storage.pvc }}
+        - name: {{ .Values.storage.pvc.name }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.storage.pvc.name }}
+{{- end }}
+        - name: config-volume
+          configMap:
+            name: clickhouse-config
+        - name: config-directory
+          emptyDir:
+            sizeLimit: "0"
+
+{{- if .Values.tolerations }}
+      tolerations:
+      - operator: {{ .Values.tolerations.operator | quote }}
+        key: {{ .Values.tolerations.key | quote }}
+{{- if .Values.tolerations.value }}
+        value: {{ .Values.tolerations.value | quote }}
+{{- end }}
+{{- if .Values.tolerations.effect }}
+        effect: {{ .Values.tolerations.effect | quote }}
+{{- end }}
+{{- end }}
+{{- if .Values.clickhouse.node_selector }}
+      nodeSelector:
+        {{ .Values.clickhouse.node_selector.key }}: {{ .Values.clickhouse.node_selector.value }}
+{{- end }}
+
