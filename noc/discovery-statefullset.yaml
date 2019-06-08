@@ -2,7 +2,6 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  annotations:
   labels:
     service: discovery
   name: discovery
