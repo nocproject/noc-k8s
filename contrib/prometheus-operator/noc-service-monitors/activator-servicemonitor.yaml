@@ -8,6 +8,6 @@ metadata:
 spec:
   selector:
     matchLabels:
-      service: activator
+      service: activator-default
   endpoints:
     - port: http
