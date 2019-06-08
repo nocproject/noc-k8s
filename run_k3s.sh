@@ -2,8 +2,8 @@
 
 # install local-path provisioner
 
-kubectl apply -f env/k3s/volumes
+kubectl apply -f overlays/k3s/volumes
 
 kubectl get storageclass
 
-kubectl apply -f env/k3s/metrics_server_k3s/
+kubectl apply -f overlays/k3s/metrics_server_k3s/
