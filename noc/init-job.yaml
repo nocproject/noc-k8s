@@ -12,6 +12,7 @@ spec:
       containers:
         - name: init
           image: registry.getnoc.com/noc/noc/dev:19.2-dev
+          imagePullPolicy: Always
           command:
             - "sh"
             - "-c"
