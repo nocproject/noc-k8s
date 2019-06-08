@@ -2,7 +2,7 @@
 kind: Job
 apiVersion: batch/v1
 metadata:
-  name: init
+  name: noc-db-init
 spec:
   template:
     spec:
