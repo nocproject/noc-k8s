@@ -40,3 +40,11 @@ place dsn key to
 ```kubectl patch configmaps noc-configmap -p '{"data":{"NOC_SENTRY_URL":"http://0c9db1b218:9d47898b64acc7f94d9020@sentry-sentry:9000/2"}}'```
 
 and restart noc. 
+
+
+# Delete sentry
+
+Remove helm release
+`helm delete --purge sentry`
+Disable noc error reporting
+ ```kubectl patch configmaps noc-configmap -p '{"data":{"NOC_FEATURES_SENTRY":"False"}}'```
