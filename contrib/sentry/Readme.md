@@ -48,3 +48,9 @@ Remove helm release
 `helm delete --purge sentry`
 Disable noc error reporting
  ```kubectl patch configmaps noc-configmap -p '{"data":{"NOC_FEATURES_SENTRY":"False"}}'```
+
+also don't forget to remove jobs
+```
+kubectl delete jobs.batch sentry-db-init
+kubectl delete jobs.batch sentry-user-create 
+```
