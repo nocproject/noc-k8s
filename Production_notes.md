@@ -10,8 +10,8 @@
 ** prometheus operator
 ** grafana
 ** dashboards
-* error reporting (sentry)
-** url
+* ~~error reporting (sentry)~~
+    * url. should be tested how to work with new sentry
 * transit encryption
 ** istio ??? 
 * password generation
