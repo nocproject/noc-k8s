@@ -41,6 +41,9 @@ spec:
 #                - NET_RAW
           imagePullPolicy: Always
           name: ping
+          ports:
+            - containerPort: 1200
+              name: http
           livenessProbe:
             httpGet:
               path: /mon/

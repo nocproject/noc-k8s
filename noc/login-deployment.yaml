@@ -36,6 +36,9 @@ spec:
           image: registry.getnoc.com/noc/noc/code:19.2-dev
           imagePullPolicy: Always
           name: login
+          ports:
+            - containerPort: 1200
+              name: http
           livenessProbe:
             httpGet:
               path: /mon/

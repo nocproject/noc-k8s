@@ -1,0 +1,13 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: selfmon-servicemonitor
+  labels:
+    service: selfmon
+spec:
+  selector:
+    matchLabels:
+      service: selfmon
+  endpoints:
+    - port: http

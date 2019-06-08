@@ -1,0 +1,13 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: chwriter-servicemonitor
+  labels:
+    service: chwriter
+spec:
+  selector:
+    matchLabels:
+      service: chwriter
+  endpoints:
+    - port: http

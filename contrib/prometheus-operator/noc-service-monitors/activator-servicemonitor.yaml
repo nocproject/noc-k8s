@@ -1,0 +1,13 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: activator-servicemonitor
+  labels:
+    service: activator
+spec:
+  selector:
+    matchLabels:
+      service: activator
+  endpoints:
+    - port: http
