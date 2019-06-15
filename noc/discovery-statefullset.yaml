@@ -22,6 +22,7 @@ spec:
       securityContext:
         runAsUser: 1200
       terminationGracePeriodSeconds: 30
+      priorityClassName: noc-discovery
       containers:
         - command:
             - python

@@ -20,6 +20,7 @@ spec:
       labels:
         service: front-nginx
     spec:
+      priorityClassName: noc-nginx
       # Load the configuration files for nginx
       volumes:
         - name: front-nginx-configmap

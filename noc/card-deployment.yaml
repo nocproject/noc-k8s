@@ -11,18 +11,15 @@ spec:
     matchLabels:
       service: card
   strategy:
-    type: RollingUpdate
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 1
+    type: RollingUpdate
   template:
     metadata:
       labels:
         service: card
     spec:
-      securityContext:
-        runAsUser: 1200
-      terminationGracePeriodSeconds: 30
       containers:
         - command:
             - python
@@ -32,17 +29,17 @@ spec:
                 name: noc-configmap
             - secretRef:
                 name: noc-secret
-          image: registry.getnoc.com/noc/noc/code:19.2-dev
+          image: 'registry.getnoc.com/noc/noc/code:19.2-dev'
           imagePullPolicy: Always
-          name: card
-          ports:
-            - containerPort: 1200
-              name: http
           livenessProbe:
             httpGet:
               path: /mon/
               port: 1200
             initialDelaySeconds: 10
+          name: card
+          ports:
+            - containerPort: 1200
+              name: http
           readinessProbe:
             httpGet:
               path: /mon/
@@ -54,3 +51,7 @@ spec:
             requests:
               cpu: 50m
               memory: 150Mi
+      priorityClassName: noc-card
+      securityContext:
+        runAsUser: 1200
+      terminationGracePeriodSeconds: 30

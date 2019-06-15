@@ -20,6 +20,10 @@ spec:
       labels:
         service: escalator
     spec:
+      securityContext:
+        runAsUser: 1200
+      terminationGracePeriodSeconds: 30
+      priorityClassName: noc-escalator
       containers:
         - command:
             - python

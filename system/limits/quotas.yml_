@@ -1,0 +1,105 @@
+# that file is not intended to be run without modification
+# more over without modifications it will break all the stuff
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: databases-quota
+  namespace: default
+spec:
+  hard:
+    cpu: "1"
+    memory: 4Gi
+  scopeSelector:
+    matchExpressions:
+    - operator : In
+      scopeName: PriorityClass
+      values:
+        - noc-clickhouse
+        - noc-mongo
+        - noc-postgres
+        - noc-consul
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: noc-inv-quota
+  namespace: default
+spec:
+  hard:
+    requests.cpu: "1"
+    requests.memory: "1800Mi"
+    limits.cpu: "1"
+    limits.memory: "1800Mi"
+  scopeSelector:
+    matchExpressions:
+    - operator : In
+      scopeName: PriorityClass
+      values:
+        - noc-activator
+        - noc-discovery
+        - noc-sae
+        - noc-syslogcollector
+        - noc-trapcollector
+        - noc-ping
+        - noc-mrt
+        - noc-datastream
+        - noc-chwriter
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: noc-web-quota
+spec:
+  hard:
+    cpu: "1"
+    memory: 4Gi
+  scopeSelector:
+    matchExpressions:
+    - operator : In
+      scopeName: PriorityClass
+      values:
+        - noc-web
+        - noc-nginx
+        - noc-card
+        - noc-login
+        - noc-datasource
+        - noc-nbi
+        - noc-bi
+        - noc-grafanads
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: noc-envents-quota
+spec:
+  hard:
+    cpu: "1"
+    memory: 4Gi
+  scopeSelector:
+    matchExpressions:
+    - operator : In
+      scopeName: PriorityClass
+      values:
+        - noc-classifier
+        - noc-correlator
+        - noc-escalator
+        - noc-mailsender
+        - noc-tgsender
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: noc-other-quota
+spec:
+  hard:
+    cpu: "1"
+    memory: 4Gi
+  scopeSelector:
+    matchExpressions:
+    - operator : In
+      scopeName: PriorityClass
+      values:
+        - noc-scheduler
+        - noc-selfmon
+        - noc-mib
