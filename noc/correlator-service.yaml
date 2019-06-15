@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: correlator
   labels:
     service: correlator
+  name: correlator
 spec:
   ports:
     - name: http

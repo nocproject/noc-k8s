@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: grafanads
   labels:
     service: grafanads
+  name: grafanads
 spec:
   ports:
     - name: http

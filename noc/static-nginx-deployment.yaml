@@ -11,40 +11,25 @@ spec:
     matchLabels:
       service: nginx
   strategy:
-    type: RollingUpdate
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 1
+    type: RollingUpdate
   template:
     metadata:
       labels:
         service: nginx
     spec:
-      priorityClassName: noc-nginx
-      # Load the configuration files for nginx
-      volumes:
-        - name: nginx-configmap
-          configMap:
-            name: nginx-configmap  # place `nginx-conf` on /etc/nginx
-            items:
-              - key: nginx.conf
-                path: nginx.conf
-              - key: noc.conf
-                path: conf.d/noc.conf
-              - key: hc.conf
-                path: conf.d/hc.conf
-              - key: mime.types
-                path: mime.types
       containers:
-        - command:
-          image: registry.getnoc.com/noc/noc/static:19.2-dev
+        - command: null
+          image: 'registry.getnoc.com/noc/noc/static:19.2-dev'
           imagePullPolicy: Always
-          name: nginx
           livenessProbe:
             httpGet:
               path: /ng_stats
               port: 81
             initialDelaySeconds: 10
+          name: nginx
           readinessProbe:
             httpGet:
               path: /ng_stats
@@ -58,6 +43,20 @@ spec:
               cpu: 10m
               memory: 50Mi
           volumeMounts:
-            - mountPath: /etc/nginx  # mount nginx-conf volumn to /etc/nginx
-              readOnly: true
+            - mountPath: /etc/nginx
               name: nginx-configmap
+              readOnly: true
+      priorityClassName: noc-nginx
+      volumes:
+        - configMap:
+            items:
+              - key: nginx.conf
+                path: nginx.conf
+              - key: noc.conf
+                path: conf.d/noc.conf
+              - key: hc.conf
+                path: conf.d/hc.conf
+              - key: mime.types
+                path: mime.types
+            name: nginx-configmap
+          name: nginx-configmap

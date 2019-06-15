@@ -10,45 +10,35 @@ spec:
   selector:
     matchLabels:
       service: ping
-  serviceName: "ping"
+  serviceName: ping
   template:
     metadata:
       labels:
         service: ping
     spec:
-      #  @todo investigate how to set NET_RAW for python script
-#      securityContext:
-#        runAsUser: 1200
-      terminationGracePeriodSeconds: 30
-      priorityClassName: noc-ping
       containers:
         - command:
             - python
             - services/ping/service.py
+          env:
+            - name: NOC_POOL
+              value: default
           envFrom:
             - configMapRef:
                 name: noc-configmap
             - secretRef:
                 name: noc-secret
-          env:
-            - name: NOC_POOL
-              value: default
-          image: registry.getnoc.com/noc/noc/code:19.2-dev
-          #  @todo investigate how to set NET_RAW for python script
-#          securityContext:
-#            capabilities:
-#              add:
-#                - NET_RAW
+          image: 'registry.getnoc.com/noc/noc/code:19.2-dev'
           imagePullPolicy: Always
-          name: ping
-          ports:
-            - containerPort: 1200
-              name: http
           livenessProbe:
             httpGet:
               path: /mon/
               port: 1200
             initialDelaySeconds: 10
+          name: ping
+          ports:
+            - containerPort: 1200
+              name: http
           readinessProbe:
             httpGet:
               path: /mon/
@@ -60,3 +50,13 @@ spec:
             requests:
               cpu: 50m
               memory: 50Mi
+          #  @todo investigate how to set NET_RAW for python script
+          # securityContext:
+          #   capabilities:
+          #     add:
+          #       - NET_RAW
+      priorityClassName: noc-ping
+      #  @todo investigate how to set NET_RAW for python script
+      # securityContext:
+      #   runAsUser: 1200
+      terminationGracePeriodSeconds: 30

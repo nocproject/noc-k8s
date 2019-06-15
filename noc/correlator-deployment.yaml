@@ -11,42 +11,38 @@ spec:
     matchLabels:
       service: correlator
   strategy:
-    type: RollingUpdate
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 1
+    type: RollingUpdate
   template:
     metadata:
       labels:
         service: correlator
     spec:
-      securityContext:
-        runAsUser: 1200
-      terminationGracePeriodSeconds: 30
-      priorityClassName: noc-correlator
       containers:
         - command:
             - python
             - services/correlator/service.py
+          env:
+            - name: NOC_POOL
+              value: default
           envFrom:
             - configMapRef:
                 name: noc-configmap
             - secretRef:
                 name: noc-secret
-          env:
-            - name: NOC_POOL
-              value: default
-          image: registry.getnoc.com/noc/noc/code:19.2-dev
+          image: 'registry.getnoc.com/noc/noc/code:19.2-dev'
           imagePullPolicy: Always
-          name: correlator
-          ports:
-            - containerPort: 1200
-              name: http
           livenessProbe:
             httpGet:
               path: /mon/
               port: 1200
             initialDelaySeconds: 10
+          name: correlator
+          ports:
+            - containerPort: 1200
+              name: http
           readinessProbe:
             httpGet:
               path: /mon/
@@ -58,3 +54,7 @@ spec:
             requests:
               cpu: 50m
               memory: 120Mi
+      priorityClassName: noc-correlator
+      securityContext:
+        runAsUser: 1200
+      terminationGracePeriodSeconds: 30

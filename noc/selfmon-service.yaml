@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: selfmon
   labels:
     service: selfmon
+  name: selfmon
 spec:
   ports:
     - name: http

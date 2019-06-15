@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: chwriter
   labels:
     service: chwriter
+  name: chwriter
 spec:
   ports:
     - name: http

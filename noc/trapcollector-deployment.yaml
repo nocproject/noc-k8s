@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
+  annotations: null
   labels:
     service: trapcollector
   name: trapcollector
@@ -12,42 +12,38 @@ spec:
     matchLabels:
       service: trapcollector
   strategy:
-    type: RollingUpdate
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 1
+    type: RollingUpdate
   template:
     metadata:
       labels:
         service: trapcollector
     spec:
-      securityContext:
-        runAsUser: 1200
-      terminationGracePeriodSeconds: 30
-      priorityClassName: noc-trapcollector
       containers:
         - command:
             - python
             - services/trapcollector/service.py
+          env:
+            - name: NOC_POOL
+              value: default
           envFrom:
             - configMapRef:
                 name: noc-configmap
             - secretRef:
                 name: noc-secret
-          env:
-            - name: NOC_POOL
-              value: default
-          image: registry.getnoc.com/noc/noc/code:19.2-dev
+          image: 'registry.getnoc.com/noc/noc/code:19.2-dev'
           imagePullPolicy: Always
-          name: trapcollector
-          ports:
-            - containerPort: 1200
-              name: http
           livenessProbe:
             httpGet:
               path: /mon/
               port: 1200
             initialDelaySeconds: 10
+          name: trapcollector
+          ports:
+            - containerPort: 1200
+              name: http
           readinessProbe:
             httpGet:
               path: /mon/
@@ -59,3 +55,7 @@ spec:
             requests:
               cpu: 50m
               memory: 80Mi
+      priorityClassName: noc-trapcollector
+      securityContext:
+        runAsUser: 1200
+      terminationGracePeriodSeconds: 30

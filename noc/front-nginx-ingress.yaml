@@ -4,15 +4,15 @@ kind: Ingress
 metadata:
   name: front-nginx-ingress
 spec:
-  tls:
-    - hosts:
-        - noc-k8s.getnoc.com
-      secretName: tls-secret
   rules:
     - host: noc-k8s.getnoc.com
       http:
         paths:
-          - path: /
-            backend:
+          - backend:
               serviceName: front-nginx
               servicePort: 80
+            path: /
+  tls:
+    - hosts:
+        - noc-k8s.getnoc.com
+      secretName: tls-secret

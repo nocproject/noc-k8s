@@ -3,33 +3,20 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: static-ingress
-  annotations:
-    nginx.ingress.kubernetes.io/server-snippet: |
-      error_page 401 = @error401;
-
-      location @error401 {
-          return 302 /api/login/index.html?uri=$request_uri;
-      }
-    nginx.org/server-snippets: |
-      error_page 401 = @error401;
-
-      location @error401 {
-          return 302 /api/login/index.html?uri=$request_uri;
-      }
 spec:
-  tls:
-    - hosts:
-        - noc-k8s.getnoc.com
-      secretName: tls-secret
   rules:
     - host: noc-k8s.getnoc.com
       http:
         paths:
-          - path: /media
-            backend:
+          - backend:
               serviceName: nginx-service
               servicePort: 80
-          - path: /ui
-            backend:
+            path: /media
+          - backend:
               serviceName: nginx-service
               servicePort: 80
+            path: /ui
+  tls:
+    - hosts:
+        - noc-k8s.getnoc.com
+      secretName: tls-secret

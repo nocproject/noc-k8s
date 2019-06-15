@@ -11,42 +11,25 @@ spec:
     matchLabels:
       service: front-nginx
   strategy:
-    type: RollingUpdate
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 1
+    type: RollingUpdate
   template:
     metadata:
       labels:
         service: front-nginx
     spec:
-      priorityClassName: noc-nginx
-      # Load the configuration files for nginx
-      volumes:
-        - name: front-nginx-configmap
-          configMap:
-            name: front-nginx-configmap  # place `nginx-conf` on /etc/nginx
-            items:
-              - key: nginx.conf
-                path: nginx.conf
-              - key: noc.conf
-                path: conf.d/noc.conf
-              - key: upstream.conf
-                path: upstream.conf
-              - key: hc.conf
-                path: conf.d/hc.conf
-              - key: mime.types
-                path: mime.types
       containers:
-        - command:
-          image: nginx:mainline-alpine
+        - command: null
+          image: 'nginx:mainline-alpine'
           imagePullPolicy: Always
-          name: front-nginx
           livenessProbe:
             httpGet:
               path: /ng_stats
               port: 81
             initialDelaySeconds: 10
+          name: front-nginx
           readinessProbe:
             httpGet:
               path: /ng_stats
@@ -60,6 +43,22 @@ spec:
               cpu: 10m
               memory: 50Mi
           volumeMounts:
-            - mountPath: /etc/nginx  # mount nginx-conf volumn to /etc/nginx
-              readOnly: true
+            - mountPath: /etc/nginx
               name: front-nginx-configmap
+              readOnly: true
+      priorityClassName: noc-nginx
+      volumes:
+        - configMap:
+            items:
+              - key: nginx.conf
+                path: nginx.conf
+              - key: noc.conf
+                path: conf.d/noc.conf
+              - key: upstream.conf
+                path: upstream.conf
+              - key: hc.conf
+                path: conf.d/hc.conf
+              - key: mime.types
+                path: mime.types
+            name: front-nginx-configmap
+          name: front-nginx-configmap

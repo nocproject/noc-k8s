@@ -1,19 +1,13 @@
 ---
-kind: Job
 apiVersion: batch/v1
+kind: Job
 metadata:
   name: noc-db-init
 spec:
   template:
     spec:
-      securityContext:
-        runAsUser: 1200
-      restartPolicy: Never
       containers:
-        - name: init
-          image: registry.getnoc.com/noc/noc/dev:19.2-dev
-          imagePullPolicy: Always
-          command:
+        - command: 
             - "sh"
             - "-c"
             - >
@@ -29,14 +23,17 @@ spec:
               && echo 'cG9vbHM6CiAgZGVmYXVsdDoKICAgIGRlc2NyaXB0aW9uOiBkZWZhdWx0Cg==' |base64 -d > /opt/noc/etc/noc.yml
               && cat /opt/noc/etc/noc.yml
               && /usr/bin/python ./scripts/deploy/apply-pools
+          env:
+            - name: NOC_PATH_NPKG_ROOT
+              value: /tmp
           envFrom:
             - configMapRef:
                 name: noc-configmap
             - secretRef:
                 name: noc-secret
-          env:
-            - name: NOC_PATH_NPKG_ROOT
-              value: /tmp
+          image: 'registry.getnoc.com/noc/noc/dev:19.2-dev'
+          imagePullPolicy: Always
+          name: init
           resources:
             limits:
               cpu: 1
@@ -44,3 +41,6 @@ spec:
             requests:
               cpu: 1
               memory: 250Mi
+      restartPolicy: Never
+      securityContext:
+        runAsUser: 1200
