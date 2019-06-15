@@ -4,11 +4,11 @@
 # Todos
 
 * consul!!!
-* external dbs 
-* logging
-* internal monitoring
-** prometheus operator
-** grafana
+* ~~external dbs~~
+* ~~logging~~
+* ~~internal monitoring~~
+** ~~prometheus operator~~
+** ~~grafana~~
 ** dashboards
 * ~~error reporting (sentry)~~
     * url. should be tested how to work with new sentry
