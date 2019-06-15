@@ -1,19 +1,19 @@
-# Source: nsq/templates/nsqd-service.yaml
+---
 apiVersion: v1
 kind: Service
 metadata:
-  name: nsqd
   labels:
     app: nsqd
+  name: nsqd
 spec:
   ports:
-  - port: 4150
-    protocol: TCP
-    name: tcp
-    targetPort: 4150
-  - port: 4151
-    protocol: TCP
-    name: http
-    targetPort: 4151
+    - name: tcp
+      port: 4150
+      protocol: TCP
+      targetPort: 4150
+    - name: http
+      port: 4151
+      protocol: TCP
+      targetPort: 4151
   selector:
     app: nsq-nsqd

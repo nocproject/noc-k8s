@@ -2,17 +2,15 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: nsq-nsqd
   labels:
     app: nsq-nsqd
+  name: nsq-nsqd
 spec:
   selector:
     matchLabels:
       app: nsq-nsqd
       component: nsqd
-  serviceName: "nsqd"
-  updateStrategy:
-    type: RollingUpdate
+  serviceName: nsqd
   template:
     metadata:
       labels:
@@ -20,45 +18,47 @@ spec:
         component: nsqd
     spec:
       containers:
-      - name: nsqd
-        image: docker.io/nsqio/nsq:v1.1.0
-        volumeMounts:
-        - name: datadir
-          mountPath: /data
-        resources:
-          limits:
-            cpu: 500m
-            memory: 50Mi
-          requests:
-            cpu: 10m
-            memory: 50Mi
-        command:
-          - sh
-        args:
-          - -c
-          - |
-            /nsqd -data-path /data  \
-            -lookupd-tcp-address nsq-lookupd-0.nsq-lookupd:4160 \
-            -mem-queue-size "10000" \
-            -broadcast-address ${HOSTNAME}.nsqd
-        ports:
-        - name: tcp
-          containerPort: 4150
-          hostPort: 4150
-        - name: http
-          containerPort: 4151
-          hostPort: 4151
-        env:
-        - name: NODE_IP
-          valueFrom:
-            fieldRef:
-              fieldPath: status.hostIP
+        - args:
+            - '-c'
+            - |
+              /nsqd -data-path /data  \
+              -lookupd-tcp-address nsq-lookupd-0.nsq-lookupd:4160 \
+              -mem-queue-size "10000" \
+              -broadcast-address ${HOSTNAME}.nsqd
+          command:
+            - sh
+          env:
+            - name: NODE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+          image: 'docker.io/nsqio/nsq:v1.1.0'
+          name: nsqd
+          ports:
+            - containerPort: 4150
+              hostPort: 4150
+              name: tcp
+            - containerPort: 4151
+              hostPort: 4151
+              name: http
+          resources:
+            limits:
+              cpu: 500m
+              memory: 50Mi
+            requests:
+              cpu: 10m
+              memory: 50Mi
+          volumeMounts:
+            - mountPath: /data
+              name: datadir
+  updateStrategy:
+    type: RollingUpdate
   volumeClaimTemplates:
-  - metadata:
-      name: datadir
-    spec:
-      accessModes:
-        - "ReadWriteOnce"
-      resources:
-        requests:
-          storage: 64Mi
+    - metadata:
+        name: datadir
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 64Mi
