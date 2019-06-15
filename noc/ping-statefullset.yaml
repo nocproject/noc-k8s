@@ -59,4 +59,5 @@ spec:
       #  @todo investigate how to set NET_RAW for python script
       # securityContext:
       #   runAsUser: 1200
+      serviceAccountName: noc-service-account
       terminationGracePeriodSeconds: 30

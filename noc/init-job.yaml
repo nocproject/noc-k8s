@@ -7,7 +7,7 @@ spec:
   template:
     spec:
       containers:
-        - command: 
+        - command:
             - "sh"
             - "-c"
             - >
@@ -44,3 +44,4 @@ spec:
       restartPolicy: Never
       securityContext:
         runAsUser: 1200
+      serviceAccountName: noc-service-account

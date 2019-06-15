@@ -60,3 +60,4 @@ spec:
                 path: mime.types
             name: nginx-configmap
           name: nginx-configmap
+      serviceAccountName: noc-service-account

@@ -58,4 +58,5 @@ spec:
       priorityClassName: noc-trapcollector
       securityContext:
         runAsUser: 1200
+      serviceAccountName: noc-service-account
       terminationGracePeriodSeconds: 30

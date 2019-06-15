@@ -57,4 +57,5 @@ spec:
       priorityClassName: noc-activator
       securityContext:
         runAsUser: 1200
+      serviceAccountName: noc-service-account
       terminationGracePeriodSeconds: 30
