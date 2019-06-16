@@ -13,6 +13,10 @@ helm init --service-account tiller --history-max 1 --upgrade
 kubectl apply -f noc/noc-configmap.yaml
 kubectl apply -f noc/noc-secret.yaml
 
+# setup service account and priorityclass
+kubectl apply -f noc/noc-rbac.yaml
+kubectl apply -f noc/priorityclass.yaml
+
 # run nsqd
 kubectl apply -f system/nsq/
 
