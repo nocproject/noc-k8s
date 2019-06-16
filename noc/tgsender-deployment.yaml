@@ -6,7 +6,7 @@ metadata:
     service: tgsender
   name: tgsender
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       service: tgsender
