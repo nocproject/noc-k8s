@@ -23,6 +23,9 @@ kubectl apply -f contrib/metallb/metallb-configmap.yaml
 # enable dns
 microk8s.enable dns
 
+# enable metrics. wait for data ~5m
+microk8s.enable metrics-server
+
 # enable psp
 # sudo vi /var/snap/microk8s/current/args/kube-apiserver
 # add PodSecurityPolicy to --enable-admission-plugins
