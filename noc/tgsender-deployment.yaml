@@ -51,8 +51,8 @@ spec:
             requests:
               cpu: 100m
               memory: 52Mi
+          securityContext:
+            runAsUser: 1200
       priorityClassName: noc-tgsender
-      securityContext:
-        runAsUser: 1200
       serviceAccountName: noc-service-account
       terminationGracePeriodSeconds: 30

@@ -54,8 +54,8 @@ spec:
             requests:
               cpu: 50m
               memory: 120Mi
+          securityContext:
+            runAsUser: 1200
       priorityClassName: noc-classifier
-      securityContext:
-        runAsUser: 1200
       serviceAccountName: noc-service-account
       terminationGracePeriodSeconds: 30

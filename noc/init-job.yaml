@@ -41,7 +41,7 @@ spec:
             requests:
               cpu: 1
               memory: 250Mi
+          securityContext:
+            runAsUser: 1200
       restartPolicy: Never
-      securityContext:
-        runAsUser: 1200
       serviceAccountName: noc-service-account

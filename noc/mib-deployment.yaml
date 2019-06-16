@@ -51,7 +51,7 @@ spec:
             requests:
               cpu: 100m
               memory: 100Mi
+          securityContext:
+            runAsUser: 1200
       priorityClassName: noc-mib
-      securityContext:
-        runAsUser: 1200
       terminationGracePeriodSeconds: 30
