@@ -27,7 +27,7 @@ kubectl apply -f system/clickhouse/
 helm upgrade --install consul --atomic stable/consul --values system/consul/values.yaml
 
 #init dbs
-helm upgrade --install postgres stable/postgresql --atomic --values system/postgres/values.yaml
+helm upgrade --install postgres stable/postgresql --atomic --values system/postgres/values.yaml --version 0.15
 helm upgrade --install mongo stable/mongodb --atomic  --values system/mongo/values.yaml
 
 
