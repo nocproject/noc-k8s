@@ -9,7 +9,16 @@ export KUBECONFIG=$PWD/privs/microk8s/config
 microk8s.enable storage
 
 # enable ingress
+# its dump.
 microk8s.enable ingress
+kubectl apply -f overlays/microk8s/loadbalancer.yaml
+kubectl apply -f overlays/microk8s/nginx-ds.yaml
+
+# enable metallb
+kubectl apply -f contrib/metallb/metallb.yaml
+
+# configure ips and create configmap
+kubectl apply -f contrib/metallb/metallb-configmap.yaml
 
 # enable dns
 microk8s.enable dns
