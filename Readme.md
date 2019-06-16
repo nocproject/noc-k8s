@@ -47,3 +47,11 @@ ExecStart=/usr/local/bin/k3s server --kubelet-arg="address=0.0.0.0"
 ```
 to the end of ExecStart
  `--kubelet-arg="address=0.0.0.0"` 
+
+
+# Istio notes
+
+inject sidecar to all noc pods
+```
+for i in *.yaml ;do kubectl apply -f <(microk8s.istioctl kube-inject -f $i); done
+```
