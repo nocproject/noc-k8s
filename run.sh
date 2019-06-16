@@ -37,4 +37,4 @@ kubectl apply -f system/tls-secret.yaml
 
 
 # init noc
-kubectl apply -f noc/init-job.yaml
+kubectl apply -f system/init-job.yaml
