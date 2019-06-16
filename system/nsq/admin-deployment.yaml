@@ -6,7 +6,7 @@ metadata:
     app: nsq-admin
   name: nsq-admin
 spec:
-  replicas: 1
+  replicas: 0
   template:
     metadata:
       labels:
