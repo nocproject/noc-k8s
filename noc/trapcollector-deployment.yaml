@@ -2,12 +2,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations: null
   labels:
     service: trapcollector
   name: trapcollector
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       service: trapcollector

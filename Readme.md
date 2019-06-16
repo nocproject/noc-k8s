@@ -30,7 +30,7 @@ for now scope of project reduced to
 - run nsqd in single server mode
 - noc restrictions
   - only one pool -- default. routing relies only on host machines. because there no good way to assign node to 
-
+- losts of noc daemons launched in 0 replicas. only launched that relies to web and discovering
 
 K3s specific notes
 ==================

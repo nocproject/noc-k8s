@@ -6,7 +6,7 @@ metadata:
     service: grafanads
   name: grafanads
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       service: grafanads

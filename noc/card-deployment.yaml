@@ -6,7 +6,7 @@ metadata:
     service: card
   name: card
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       service: card

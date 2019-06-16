@@ -6,7 +6,7 @@ metadata:
     service: escalator
   name: escalator
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       service: escalator

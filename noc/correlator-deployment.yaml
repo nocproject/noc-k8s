@@ -6,7 +6,7 @@ metadata:
     service: correlator
   name: correlator
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       service: correlator

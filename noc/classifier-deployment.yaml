@@ -6,7 +6,7 @@ metadata:
     service: classifier
   name: classifier
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       service: classifier

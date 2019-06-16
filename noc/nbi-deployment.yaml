@@ -6,7 +6,7 @@ metadata:
     service: nbi
   name: nbi
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       service: nbi
