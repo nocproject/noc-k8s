@@ -4,9 +4,14 @@ helm repo add loki https://grafana.github.io/loki/charts
 helm repo update
 ```
 
+# create pvc for loki
+```
+
+```
+
 # place loki and promtail
 ```
-rhelm upgrade --install log loki/loki-stack  --atomic --namespace logging --values promtail.yaml --values loki.yaml 
+helm upgrade --install log loki/loki-stack  --atomic --namespace logging --values promtail.yaml --values loki.yaml 
 
 ```
 
