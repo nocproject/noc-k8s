@@ -12,17 +12,15 @@
 ** dashboards
 * ~~error reporting (sentry)~~
     * url. should be tested how to work with new sentry
-* transit encryption
-** istio ??? 
-* password generation
-** eluminate default passwords
-* helm/kapitan/kustomize
+* ~~transit encryption ??~~  costs too much. 
+** ~~istio ???~~  costs too much.
+* password generation 
+** eliminate default passwords
+* ~~helm/kapitan/kustomize~~ helm.
 * direct access to clickhouse / chproxy
-* proxy support ? 
+* ~~proxy support ?~~ out of scope 
 
-
-
-# principle scheme
+# principle scheme of web interface
 
 render me on https://mermaidjs.github.io/mermaid-live-editor/
 ```

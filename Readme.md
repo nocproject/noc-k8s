@@ -1,8 +1,8 @@
-Noc deployment via k8s
-======================
+# Noc deployment via k8s
 
-In extremely early stage
-------------------------
+
+## Alpha quality
+
 
 read `run.sh` for more details.
 
@@ -10,27 +10,20 @@ run_yandex sholud init yandex kubernetes if you already has one.
 teardown.sh -- should do its best to delete everything  
 
 
-WARNING
-=======
+## WARNING
+
 
 Security is not our focus on current stage of development. 
 We use "noc" for every password in system. 
 
-except web iface. there we use admin:admin
-
-Nsq via helm is not working for now as expected. 
+except web iface. there we use admin:admin 
 
 As for now we are expecting that pvc will have default storage class so we do not need to set them manually.
 
-Scope of current development
-=============================
+## Scope of current development
 
 for now scope of project reduced to
 - run dbs in single server mode without any ha. but persist db data to disks
-- run nsqd in single server mode
-- noc restrictions
-  - only one pool -- default. routing relies only on host machines. because there no good way to assign node to 
-- losts of noc daemons launched in 0 replicas. only launched that relies to web and discovering
 
 K3s specific notes
 ==================
@@ -48,10 +41,3 @@ ExecStart=/usr/local/bin/k3s server --kubelet-arg="address=0.0.0.0"
 to the end of ExecStart
  `--kubelet-arg="address=0.0.0.0"` 
 
-
-# Istio notes
-
-inject sidecar to all noc pods
-```
-for i in *.yaml ;do kubectl apply -f <(microk8s.istioctl kube-inject -f $i); done
-```
