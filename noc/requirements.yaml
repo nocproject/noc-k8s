@@ -1,7 +1,13 @@
 dependencies:
   - name: consul
-    version: 3.7.0
-    repository: "@stable"
+    version: 0.8.1
+    repository: "file://charts/consul"
+  - name: clickhouse
+    version: 0.1.0
+    repository: "file://charts/clickhouse"
+  - name: nsqd
+    version: 0.1.0
+    repository: "file://charts/nsqd"
   - name: mongodb
     version: 6.1.5
     repository: "@stable"
