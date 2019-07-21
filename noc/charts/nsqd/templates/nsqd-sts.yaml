@@ -26,9 +26,10 @@ spec:
             - '-c'
             - |
               /nsqd -data-path /data  \
+              {{- $root := . }}
               {{- range $i, $v := until (int .Values.replicaCount.lookupd ) }}
               -lookupd-tcp-address \
-              nsq-lookupd-{{$i}}.{{ include "nsqd.lookupd.fullname" $ }}:4160 \
+              {{ $root.Release.Name }}-lookupd-{{$i}}.{{ include "nsqd.lookupd.fullname" $ }}:4160 \
               {{- end }}
               -mem-queue-size "10000"
           command:

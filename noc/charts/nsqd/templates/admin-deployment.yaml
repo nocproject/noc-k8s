@@ -27,9 +27,10 @@ spec:
       containers:
         - command:
             - /nsqadmin
+            {{- $root := . }}
             {{- range $i, $v := until (int .Values.replicaCount.lookupd ) }}
             - -lookupd-http-address
-            - nsq-lookupd-{{$i}}.{{ include "nsqd.lookupd.fullname" $ }}:4161
+            - {{ $root.Release.Name }}-lookupd-{{$i}}.{{ include "nsqd.lookupd.fullname" $ }}:4161
             {{- end }}
 
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
