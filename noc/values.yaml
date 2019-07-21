@@ -245,6 +245,21 @@ mongodb:
   persistence:
     size: 1Gi
 
+grafana:
+  rbac:
+    create: true
+    pspEnabled: false
+    pspUseAppArmor: false
+    namespaced: false
+  image:
+    repository: grafana/grafana
+    tag: 6.2.5
+    pullPolicy: IfNotPresent
+  plugins: []
+    # - digrich-bubblechart-panel
+    # - grafana-clock-panel
+
+
 # we are not expecting any changes below this line. change it when you know what are you doing
 #-------------------------------------------------------------------------------
 resources:
