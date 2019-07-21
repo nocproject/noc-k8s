@@ -1,0 +1,59 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "nsqd.lookupd.fullname" . }}
+  labels:
+    service: lookupd
+{{ include "nsqd.labels" . | indent 4 }}
+spec:
+  serviceName: {{ include "nsqd.lookupd.fullname" . }}
+  replicas: {{ .Values.replicaCount.lookupd }}
+  selector:
+    matchLabels:
+      service: lookupd
+      app.kubernetes.io/name: {{ include "nsqd.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        service: lookupd
+        app.kubernetes.io/name: {{ include "nsqd.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+        - command:
+            - /nsqlookupd
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: http
+            initialDelaySeconds: 5
+          name: lookupd
+          ports:
+            - containerPort: 4160
+              name: tcp
+            - containerPort: 4161
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /ping
+              port: http
+            initialDelaySeconds: 2
+          resources:
+            {{- toYaml .Values.resources.lookupd | nindent 12 }}
+      {{- with .Values.nodeSelector.lookupd }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity.lookupd }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations.lookupd }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

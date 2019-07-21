@@ -1,0 +1,64 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "nsqd.admin.fullname" . }}
+  labels:
+    service: admin
+{{ include "nsqd.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount.admin }}
+  selector:
+    matchLabels:
+      service: admin
+      app.kubernetes.io/name: {{ include "nsqd.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        service: admin
+        app.kubernetes.io/name: {{ include "nsqd.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      containers:
+        - command:
+            - /nsqadmin
+            {{- range $i, $v := until (int .Values.replicaCount.lookupd ) }}
+            - -lookupd-http-address
+            - nsq-lookupd-{{$i}}.{{ include "nsqd.lookupd.fullname" $ }}:4161
+            {{- end }}
+
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: http
+            initialDelaySeconds: 10
+          name: admin
+          ports:
+            - containerPort: 4171
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /ping
+              port: http
+            initialDelaySeconds: 5
+          resources:
+            {{- toYaml .Values.resources.admin | nindent 12 }}
+      {{- with .Values.nodeSelector.admin }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity.admin }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations.admin }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

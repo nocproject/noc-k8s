@@ -1,0 +1,76 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "nsqd.nsqd.fullname" . }}
+  labels:
+    service: nsqd
+{{ include "nsqd.labels" . | indent 4 }}
+spec:
+  serviceName: {{ include "nsqd.nsqd.fullname" . }}
+  replicas: {{ .Values.replicaCount.nsqd }}
+  selector:
+    matchLabels:
+      service: nsqd
+      app.kubernetes.io/name: {{ include "nsqd.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        service: nsqd
+        app.kubernetes.io/name: {{ include "nsqd.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - args:
+            - '-c'
+            - |
+              /nsqd -data-path /data  \
+              {{- range $i, $v := until (int .Values.replicaCount.lookupd ) }}
+              -lookupd-tcp-address \
+              nsq-lookupd-{{$i}}.{{ include "nsqd.lookupd.fullname" $ }}:4160 \
+              {{- end }}
+              -mem-queue-size "10000"
+          command:
+            - sh
+          env:
+            - name: NODE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          name: nsqd
+          ports:
+            - containerPort: 4150
+              name: tcp
+            - containerPort: 4151
+              name: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: /data
+              name: {{ include "nsqd.nsqd.fullname" . }}-datadir
+      {{- with .Values.nodeSelector.nsqd }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity.nsqd }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations.nsqd }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+  updateStrategy:
+    type: RollingUpdate
+  volumeClaimTemplates:
+    - metadata:
+        name: {{ include "nsqd.nsqd.fullname" . }}-datadir
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: {{.Values.persistentVolume.size }}
