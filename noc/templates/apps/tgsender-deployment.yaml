@@ -1,0 +1,74 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "noc.tgsender.fullname" . }}
+  labels:
+    service: tgsender
+{{ include "noc.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount.global.tgsender }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "noc.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      service: tgsender
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "noc.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        service: tgsender
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      containers:
+        - command:
+            - python
+            - services/tgsender/service.py
+          envFrom:
+            - configMapRef:
+                name: noc-configmap
+            - secretRef:
+                name: noc-secret
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          livenessProbe:
+            httpGet:
+              path: /mon/
+              port: 1200
+            initialDelaySeconds: 10
+          name: tgsender
+          ports:
+            - containerPort: 1200
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /mon/
+              port: 1200
+          resources:
+            {{- toYaml .Values.resources.tgsender | nindent 12 }}
+          securityContext:
+            runAsUser: 1200
+      priorityClassName: noc-tgsender
+      serviceAccountName: noc-service-account
+      terminationGracePeriodSeconds: 30
+      {{- with .Values.nodeSelector.tgsender }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity.tgsender }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations.tgsender }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

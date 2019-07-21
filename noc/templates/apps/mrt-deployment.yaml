@@ -1,0 +1,74 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "noc.mrt.fullname" . }}
+  labels:
+    service: mrt
+{{ include "noc.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount.global.mrt }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "noc.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      service: mrt
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "noc.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        service: mrt
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      containers:
+        - command:
+            - python
+            - services/mrt/service.py
+          envFrom:
+            - configMapRef:
+                name: noc-configmap
+            - secretRef:
+                name: noc-secret
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          livenessProbe:
+            httpGet:
+              path: /mon/
+              port: 1200
+            initialDelaySeconds: 10
+          name: mrt
+          ports:
+            - containerPort: 1200
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /mon/
+              port: 1200
+          resources:
+            {{- toYaml .Values.resources.mrt | nindent 12 }}
+          securityContext:
+            runAsUser: 1200
+      priorityClassName: noc-mrt
+      serviceAccountName: noc-service-account
+      terminationGracePeriodSeconds: 30
+      {{- with .Values.nodeSelector.mrt }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity.mrt }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations.mrt }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

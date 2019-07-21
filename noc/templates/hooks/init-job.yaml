@@ -1,0 +1,55 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Release.Name }}-db-init"
+  labels:
+{{ include "noc.labels" . | indent 4 }}
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": "post-install,post-upgrade"
+    "helm.sh/hook-delete-policy": "hook-succeeded,before-hook-creation"
+    "helm.sh/hook-weight": "-5"
+spec:
+  template:
+    spec:
+      containers:
+        - command:
+            - "sh"
+            - "-c"
+            - >
+              set -xe
+              && /usr/bin/python ./commands/migrate.py
+              && ./noc ensure-indexes
+              && /usr/bin/python ./commands/migrate-ch.py
+              && /usr/bin/python ./scripts/deploy/install-packages requirements/collections.json
+              && ./noc collection sync
+              && ./noc sync-perm
+              && ./noc sync-mibs
+              && mkdir -p /opt/noc/etc
+              && echo 'cG9vbHM6CiAgZGVmYXVsdDoKICAgIGRlc2NyaXB0aW9uOiBkZWZhdWx0Cg==' |base64 -d > /opt/noc/etc/noc.yml
+              && cat /opt/noc/etc/noc.yml
+              && /usr/bin/python ./scripts/deploy/apply-pools
+          env:
+            - name: NOC_PATH_NPKG_ROOT
+              value: /tmp
+          envFrom:
+            - configMapRef:
+                name: noc-configmap
+            - secretRef:
+                name: noc-secret
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          name: init
+          resources:
+            limits:
+              cpu: 1
+              memory: 250Mi
+            requests:
+              cpu: 1
+              memory: 250Mi
+          securityContext:
+            runAsUser: 1200
+      restartPolicy: Never
+      serviceAccountName: noc-service-account

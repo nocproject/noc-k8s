@@ -1,0 +1,15 @@
+dependencies:
+- name: consul
+  repository: https://kubernetes-charts.storage.googleapis.com
+  version: 3.7.0
+- name: mongodb
+  repository: https://kubernetes-charts.storage.googleapis.com
+  version: 6.1.5
+- name: postgresql
+  repository: https://kubernetes-charts.storage.googleapis.com
+  version: 0.15.0
+- name: grafana
+  repository: https://kubernetes-charts.storage.googleapis.com
+  version: 3.5.12
+digest: sha256:d0712136e57c33ab06403d28e5c8cf754fd6cb11698bd52347291c772c859a4f
+generated: "2019-07-20T17:51:43.307319611+03:00"

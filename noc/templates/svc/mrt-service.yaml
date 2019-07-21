@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "noc.mrt.fullname" . }}
+  labels:
+    service: mrt
+{{ include "noc.labels" . | indent 4 }}
+spec:
+  clusterIP: None
+  ports:
+    - name: http
+      port: 1200
+      protocol: TCP
+      targetPort: http
+  selector:
+    service: mrt
+    app.kubernetes.io/name: {{ include "noc.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}

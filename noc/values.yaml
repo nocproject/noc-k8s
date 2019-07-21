@@ -1,0 +1,1090 @@
+# Default values for noc.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+image:
+  repository: registry.getnoc.com/noc/noc/code
+  tag: 19.2-dev
+  pullPolicy: IfNotPresent
+
+replicaCount:
+  global:
+    bi: 1
+    card: 1
+    chwriter: 1
+    datasource: 1
+    datastream: 1
+    escalator: 1
+    grafanads: 1
+    login: 1
+    mailsender: 1
+    mib: 1
+    mrt: 1
+    nbi: 1
+    sae: 1
+    scheduler: 1
+    selfmon: 1
+    tgsender: 1
+    web: 1
+  pools:
+    default:
+      activator: 1
+      classifier: 1
+      correlator: 1
+      discovery: 1
+      ping: 1
+      syslogcollector: 1
+      trapcollector: 1
+
+ingress:
+  enabled: true
+  annotations:
+     kubernetes.io/ingress.class: nginx
+     kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths: []
+
+  tls:
+    - secretName: chart-example-tls
+      hosts:
+        - chart-example.local
+
+nodeSelector:
+  global:
+    bi: {}
+    card: {}
+    chwriter: {}
+    datasource: {}
+    datastream: {}
+    escalator: {}
+    grafanads: {}
+    login: {}
+    mailsender: {}
+    mib: {}
+    mrt: {}
+    nbi: {}
+    sae: {}
+    scheduler: {}
+    selfmon: {}
+    tgsender: {}
+    web: {}
+  pool-default:
+    activator: {}
+    classifier: {}
+    correlator: {}
+    discovery: {}
+    ping: {}
+    syslogcollector: {}
+    trapcollector: {}
+
+clickhouse:
+  users:
+    ro_user_name: default
+    ro_user_password: noc
+    rw_user_name: noc
+    rw_user_password: noc
+
+  persistentVolume:
+    accessModes:
+      - ReadWriteOnce
+    size: 2Gi
+nsq:
+  replicaCount:
+    admin: 1
+    nsqd: 1
+    lookupd: 1
+postgresql:
+  ## postgres image repository
+  image: "postgres"
+  ## postgres image version
+  ## ref: https://hub.docker.com/r/library/postgres/tags/
+  ##
+  imageTag: "9.6.2"
+
+  ## Specify a imagePullPolicy
+  ## 'Always' if imageTag is 'latest', else set to 'IfNotPresent'
+  ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+  ##
+  # imagePullPolicy:
+
+  ## Specify imagePullSecrets
+  ## ref: https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
+  ##
+  # imagePullSecrets: myregistrykey
+
+  ## Create a database user
+  ## Default: postgres
+  postgresUser: noc
+  ## Default: random 10 character string
+  postgresPassword: noc
+
+  ## Inject postgresPassword via a volume mount instead of environment variable
+  usePasswordFile: false
+
+  ## Use Existing secret instead of creating one
+  ## It must have a postgres-password key containing the desired password
+  # existingSecret: 'secret'
+
+  ## Create a database
+  ## Default: the postgres user
+  postgresDatabase: noc
+
+  ## Specify initdb arguments, e.g. --data-checksums
+  ## ref: https://github.com/docker-library/docs/blob/master/postgres/content.md#postgres_initdb_args
+  ## ref: https://www.postgresql.org/docs/current/static/app-initdb.html
+  # postgresInitdbArgs:
+
+  ## Use an alternate scheduler, e.g. "stork".
+  ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
+  ##
+  # schedulerName:
+
+  ## Specify runtime config parameters as a dict, using camelCase, e.g.
+  ## {"sharedBuffers": "500MB"}
+  ## ref: https://www.postgresql.org/docs/current/static/runtime-config.html
+  # postgresConfig:
+
+  ## Persist data to a persistent volume
+  persistence:
+    enabled: true
+
+    ## A manually managed Persistent Volume and Claim
+    ## Requires persistence.enabled: true
+    ## If defined, PVC must be created manually before volume will be bound
+    # existingClaim:
+
+    ## database data Persistent Volume Storage Class
+    ## If defined, storageClassName: <storageClass>
+    ## If set to "-", storageClassName: "", which disables dynamic provisioning
+    ## If undefined (the default) or set to null, no storageClassName spec is
+    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+    ##   GKE, AWS & OpenStack)
+    ##
+    # storageClass: "-"
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    subPath: "postgresql-db"
+    mountPath: /var/lib/postgresql/data/pgdata
+
+    # annotations: {}
+
+  metrics:
+    enabled: false
+    image: wrouesnel/postgres_exporter
+    imageTag: v0.1.1
+    imagePullPolicy: IfNotPresent
+    resources:
+      requests:
+        memory: 256Mi
+        cpu: 100m
+      ## Define additional custom metrics
+      ## ref: https://github.com/wrouesnel/postgres_exporter#adding-new-metrics-via-a-config-file
+      # customMetrics:
+      #   pg_database:
+      #     query: "SELECT d.datname AS name, CASE WHEN pg_catalog.has_database_privilege(d.datname, 'CONNECT') THEN pg_catalog.pg_database_size(d.datname) ELSE 0 END AS size FROM pg_catalog.pg_database d where datname not in ('template0', 'template1', 'postgres')"
+      #     metrics:
+      #       - name:
+      #           usage: "LABEL"
+      #           description: "Name of the database"
+      #       - size_bytes:
+      #           usage: "GAUGE"
+      #           description: "Size of the database in bytes"
+
+  ## Configure resource requests and limits
+  ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 100m
+
+  service:
+    type: ClusterIP
+    port: 5432
+    externalIPs: []
+    ## Manually set NodePort value
+    ## Requires service.type: NodePort
+    # nodePort:
+
+  networkPolicy:
+    ## Enable creation of NetworkPolicy resources.
+    ##
+    enabled: false
+
+    ## The Policy model to apply. When set to false, only pods with the correct
+    ## client label will have network access to the port PostgreSQL is listening
+    ## on. When true, PostgreSQL will accept connections from any source
+    ## (with the correct destination port).
+    ##
+    allowExternal: true
+
+  ## Node labels and tolerations for pod assignment
+  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
+  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#taints-and-tolerations-beta-feature
+  nodeSelector: {}
+  #tolerations: [ "NoSchedule" ]
+  affinity: {}
+
+  # Override default liveness & readiness probes
+  probes:
+    liveness:
+      initialDelay: 60
+      timeoutSeconds: 5
+      failureThreshold: 6
+    readiness:
+      initialDelay: 5
+      timeoutSeconds: 3
+      periodSeconds: 5
+  ## Annotations for the deployment and nodes.
+  deploymentAnnotations: {}
+  podAnnotations: {}
+
+  ## Deployment pods replace strategy
+  ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
+  # strategy: {}
+consul:
+  # Available parameters and their default values for the Consul chart.
+
+  global:
+    # enabled is the master enabled switch. Setting this to true or false
+    # will enable or disable all the components within this chart by default.
+    # Each component can be overridden using the component-specific "enabled"
+    # value.
+    enabled: true
+
+    # Domain to register the Consul DNS server to listen for.
+    domain: consul
+
+    # Image is the name (and tag) of the Consul Docker image for clients and
+    # servers below. This can be overridden per component.
+    #
+    # Examples:
+    #   image: "consul:1.5.0"
+    #   image: "hashicorp/consul-enterprise:1.5.0-ent"   # Enterprise Consul image
+    image: "consul:1.5.2"
+
+    # imageK8S is the name (and tag) of the consul-k8s Docker image that
+    # is used for functionality such as the catalog sync. This can be overridden
+    # per component below.
+    # Note: support for the catalog sync's liveness and readiness probes was added
+    # to consul-k8s v0.6.0. If using an older consul-k8s version, you may need to
+    # remove these checks to make the sync work.
+    imageK8S: "hashicorp/consul-k8s:0.8.1"
+
+    # Datacenter is the name of the datacenter that the agents should register
+    # as. This shouldn't be changed once the Consul cluster is up and running
+    # since Consul doesn't support an automatic way to change this value
+    # currently: https://github.com/hashicorp/consul/issues/1858
+    datacenter: dc1
+
+    # enablePodSecurityPolicies is a boolean flag that controls whether pod
+    # security policies are created for the consul components created by this
+    # chart. See https://kubernetes.io/docs/concepts/policy/pod-security-policy/
+    enablePodSecurityPolicies: false
+
+    # Gossip encryption key. To enable gossip encryption, provide the name of
+    # a Kubernetes secret that contains a gossip key. You can create a gossip
+    # key with the "consul keygen" command.
+    # See https://www.consul.io/docs/commands/keygen.html
+    gossipEncryption:
+      secretName: null
+      secretKey: null
+
+    # bootstrapACLs will automatically create and assign ACL tokens within
+    # the Consul cluster. This currently requires enabling both servers and
+    # clients within Kubernetes. Additionally requires Consul v1.4+ and
+    # consul-k8s v0.8.0+.
+    bootstrapACLs: false
+
+  # Server, when enabled, configures a server cluster to run. This should
+  # be disabled if you plan on connecting to a Consul cluster external to
+  # the Kube cluster.
+  server:
+    enabled: "-"
+    image: null
+    replicas: 1
+    bootstrapExpect: 1 # Should <= replicas count
+
+    # enterpriseLicense refers to a Kubernetes secret that you have created that
+    # contains your enterprise license. It is required if you are using an
+    # enterprise binary. Defining it here applies it to your cluster once a leader
+    # has been elected. If you are not using an enterprise image
+    # or if you plan to introduce the license key via another route, then set
+    # these fields to null.
+    enterpriseLicense:
+      secretName: null
+      secretKey: null
+
+    # storage and storageClass are the settings for configuring stateful
+    # storage for the server pods. storage should be set to the disk size of
+    # the attached volume. storageClass is the class of storage which defaults
+    # to null (the Kube cluster will pick the default).
+    storage: 1Gi
+    storageClass: null
+
+    # connect will enable Connect on all the servers, initializing a CA
+    # for Connect-related connections. Other customizations can be done
+    # via the extraConfig setting.
+    connect: true
+
+    # Resource requests, limits, etc. for the server cluster placement. This
+    # should map directly to the value of the resources field for a PodSpec,
+    # formatted as a multi-line string. By default no direct resource request
+    # is made.
+    resources: null
+
+    # updatePartition is used to control a careful rolling update of Consul
+    # servers. This should be done particularly when changing the version
+    # of Consul. Please refer to the documentation for more information.
+    updatePartition: 0
+
+    # disruptionBudget enables the creation of a PodDisruptionBudget to
+    # prevent voluntary degrading of the Consul server cluster.
+    disruptionBudget:
+      enabled: false
+
+      # maxUnavailable will default to (n/2)-1 where n is the number of
+      # replicas. If you'd like a custom value, you can specify an override here.
+      maxUnavailable: null
+
+    # extraConfig is a raw string of extra configuration to set with the
+    # server. This should be JSON.
+    extraConfig: |
+      {}
+
+    # extraVolumes is a list of extra volumes to mount. These will be exposed
+    # to Consul in the path `/consul/userconfig/<name>/`. The value below is
+    # an array of objects, examples are shown below.
+    extraVolumes: []
+      # - type: secret (or "configMap")
+    #   name: my-secret
+    #   load: false # if true, will add to `-config-dir` to load by Consul
+
+    # Affinity Settings
+    # Commenting out or setting as empty the affinity variable, will allow
+    # deployment to single node services such as Minikube
+    affinity: {} #|
+    #    podAntiAffinity:
+    #    preferredDuringSchedulingIgnoredDuringExecution:
+    #      - labelSelector:
+    #          matchLabels:
+    #            app: {{ template "consul.name" . }}
+    #            release: "{{ .Release.Name }}"
+    #            component: server
+    #  topologyKey: kubernetes.io/hostname
+
+    # Toleration Settings for server pods
+    # This should be a multi-line string matching the Toleration array
+    # in a PodSpec.
+    tolerations: ""
+
+    # nodeSelector labels for server pod assignment, formatted as a muli-line string.
+    # ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
+    # Example:
+    # nodeSelector: |
+    #   beta.kubernetes.io/arch: amd64
+    nodeSelector: null
+
+    # used to assign priority to server pods
+    # ref: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
+    priorityClassName: ""
+
+    # Extra annotations to attach to the server pods
+    # This should be a multi-line string mapping directly to the a map of
+    # the annotations to apply to the server pods
+    annotations: null
+
+    # extraEnvVars is a list of extra enviroment variables to set with the stateful set. These could be
+    # used to include proxy settings required for cloud auto-join feature,
+    # in case kubernetes cluster is behind egress http proxies. Additionally, it could be used to configure
+    # custom consul parameters.
+    extraEnvironmentVars: {}
+      # http_proxy: http://localhost:3128,
+    # https_proxy: http://localhost:3128,
+    # no_proxy: internal.domain.com
+
+  # Client, when enabled, configures Consul clients to run on every node
+  # within the Kube cluster. The current deployment model follows a traditional
+  # DC where a single agent is deployed per node.
+  client:
+    enabled: "-"
+    image: null
+    join: null
+
+    # grpc should be set to true if the gRPC listener should be enabled.
+    # This should be set to true if connectInject is enabled.
+    grpc: false
+
+    # Resource requests, limits, etc. for the client cluster placement. This
+    # should map directly to the value of the resources field for a PodSpec,
+    # formatted as a multi-line string. By default no direct resource request
+    # is made.
+    resources: null
+
+    # extraConfig is a raw string of extra configuration to set with the
+    # server. This should be JSON.
+    extraConfig: |
+      {}
+
+    # extraVolumes is a list of extra volumes to mount. These will be exposed
+    # to Consul in the path `/consul/userconfig/<name>/`. The value below is
+    # an array of objects, examples are shown below.
+    extraVolumes: []
+      # - type: secret (or "configMap")
+    #   name: my-secret
+    #   load: false # if true, will add to `-config-dir` to load by Consul
+
+    # Toleration Settings for Client pods
+    # This should be a multi-line string matching the Toleration array
+    # in a PodSpec.
+    # The example below will allow Client pods to run on every node
+    # regardless of taints
+    # tolerations: |
+    #   - operator: "Exists"
+    tolerations: ""
+
+    # nodeSelector labels for client pod assignment, formatted as a muli-line string.
+    # ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
+    # Example:
+    # nodeSelector: |
+    #   beta.kubernetes.io/arch: amd64
+    nodeSelector: null
+
+    # used to assign priority to client pods
+    # ref: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
+    priorityClassName: ""
+
+    # Extra annotations to attach to the client pods
+    # This should be a multi-line string mapping directly to the a map of
+    # the annotations to apply to the client pods
+    annotations: null
+
+    # extraEnvVars is a list of extra enviroment variables to set with the pod. These could be
+    # used to include proxy settings required for cloud auto-join feature,
+    # in case kubernetes cluster is behind egress http proxies. Additionally, it could be used to configure
+    # custom consul parameters.
+    extraEnvironmentVars: {}
+      # http_proxy: http://localhost:3128,
+    # https_proxy: http://localhost:3128,
+    # no_proxy: internal.domain.com
+
+  # Configuration for DNS configuration within the Kubernetes cluster.
+  # This creates a service that routes to all agents (client or server)
+  # for serving DNS requests. This DOES NOT automatically configure kube-dns
+  # today, so you must still manually configure a `stubDomain` with kube-dns
+  # for this to have any effect:
+  # https://kubernetes.io/docs/tasks/administer-cluster/dns-custom-nameservers/#configure-stub-domain-and-upstream-dns-servers
+  dns:
+    enabled: "-"
+
+  ui:
+    # True if you want to enable the Consul UI. The UI will run only
+    # on the server nodes. This makes UI access via the service below (if
+    # enabled) predictable rather than "any node" if you're running Consul
+    # clients as well.
+    enabled: "True"
+
+    # True if you want to create a Service entry for the Consul UI.
+    #
+    # serviceType can be used to control the type of service created. For
+    # example, setting this to "LoadBalancer" will create an external load
+    # balancer (for supported K8S installations) to access the UI.
+    service:
+      enabled: true
+      type: null
+      # This should be a multi-line string mapping directly to the a map of
+      # the annotations to apply to the UI service
+      annotations: null
+      # Additional ServiceSpec values
+      # This should be a multi-line string mapping directly to a Kubernetes
+      # ServiceSpec object.
+      additionalSpec: null
+
+  # syncCatalog will run the catalog sync process to sync K8S with Consul
+  # services. This can run bidirectional (default) or unidirectionally (Consul
+  # to K8S or K8S to Consul only).
+  #
+  # This process assumes that a Consul agent is available on the host IP.
+  # This is done automatically if clients are enabled. If clients are not
+  # enabled then set the node selection so that it chooses a node with a
+  # Consul agent.
+  syncCatalog:
+    # True if you want to enable the catalog sync. "-" for default.
+    enabled: true
+    image: null
+    default: true # true will sync by default, otherwise requires annotation
+
+    # toConsul and toK8S control whether syncing is enabled to Consul or K8S
+    # as a destination. If both of these are disabled, the sync will do nothing.
+    toConsul: true
+    toK8S: true
+
+    # k8sPrefix is the service prefix to prepend to services before registering
+    # with Kubernetes. For example "consul-" will register all services
+    # prepended with "consul-". (Consul -> Kubernetes sync)
+    k8sPrefix: null
+
+    # consulPrefix is the service prefix which preprends itself
+    # to Kubernetes services registered within Consul
+    # For example, "k8s-" will register all services peprended with "k8s-".
+    # (Kubernetes -> Consul sync)
+    consulPrefix: null
+
+    # k8sTag is an optional tag that is applied to all of the Kubernetes services
+    # that are synced into Consul. If nothing is set, defaults to "k8s".
+    # (Kubernetes -> Consul sync)
+    k8sTag: null
+
+    # syncClusterIPServices syncs services of the ClusterIP type, which may
+    # or may not be broadly accessible depending on your Kubernetes cluster.
+    # Set this to false to skip syncing ClusterIP services.
+    syncClusterIPServices: true
+
+    # nodePortSyncType configures the type of syncing that happens for NodePort
+    # services. The valid options are: ExternalOnly, InternalOnly, ExternalFirst.
+    # - ExternalOnly will only use a node's ExternalIP address for the sync
+    # - InternalOnly use's the node's InternalIP address
+    # - ExternalFirst will preferentially use the node's ExternalIP address, but
+    #   if it doesn't exist, it will use the node's InternalIP address instead.
+    nodePortSyncType: ExternalFirst
+
+    # aclSyncToken refers to a Kubernetes secret that you have created that contains
+    # an ACL token for your Consul cluster which allows the sync process the correct
+    # permissions. This is only needed if ACLs are enabled on the Consul cluster.
+    aclSyncToken:
+      secretName: null
+      secretKey: null
+
+    # nodeSelector labels for syncCatalog pod assignment, formatted as a muli-line string.
+    # ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
+    # Example:
+    # nodeSelector: |
+    #   beta.kubernetes.io/arch: amd64
+    nodeSelector: null
+
+  # ConnectInject will enable the automatic Connect sidecar injector.
+  connectInject:
+    enabled: true
+    image: null # image for consul-k8s that contains the injector
+    default: true # true will inject by default, otherwise requires annotation
+
+    # imageConsul and imageEnvoy can be set to Docker images for Consul and
+    # Envoy, respectively. If the Consul image is not specified, the global
+    # default will be used. If the Envoy image is not specified, an early
+    # version of Envoy will be used.
+    imageConsul: null
+    imageEnvoy: null
+
+    # namespaceSelector is the selector for restricting the webhook to only
+    # specific namespaces. This should be set to a multiline string.
+    namespaceSelector:
+      matchLabels:
+        consul-sidecar-injector: enabled
+
+    # The certs section configures how the webhook TLS certs are configured.
+    # These are the TLS certs for the Kube apiserver communicating to the
+    # webhook. By default, the injector will generate and manage its own certs,
+    # but this requires the ability for the injector to update its own
+    # MutatingWebhookConfiguration. In a production environment, custom certs
+    # should probaly be used. Configure the values below to enable this.
+    certs:
+      # secretName is the name of the secret that has the TLS certificate and
+      # private key to serve the injector webhook. If this is null, then the
+      # injector will default to its automatic management mode that will assign
+      # a service account to the injector to generate its own certificates.
+      secretName: null
+
+      # caBundle is a base64-encoded PEM-encoded certificate bundle for the
+      # CA that signed the TLS certificate that the webhook serves. This must
+      # be set if secretName is non-null.
+      caBundle: ""
+
+      # certName and keyName are the names of the files within the secret for
+      # the TLS cert and private key, respectively. These have reasonable
+      # defaults but can be customized if necessary.
+      certName: tls.crt
+      keyName: tls.key
+
+    # nodeSelector labels for connectInject pod assignment, formatted as a muli-line string.
+    # ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
+    # Example:
+    # nodeSelector: |
+    #   beta.kubernetes.io/arch: amd64
+    nodeSelector: null
+
+    # aclBindingRuleSelector is a string that defines the automatic binding
+    # rule to control the allowed authentication for Connect injection. The
+    # default disallows using the default service account for ACl generation.
+    # Requires Consul v1.5+ and consul-k8s v0.8.0+.
+    aclBindingRuleSelector: "serviceaccount.name!=default"
+
+    # Requires Consul v1.5+ and consul-k8s v0.8.1+
+    centralConfig:
+      enabled: false
+
+      # defaultProtocol allows you to specify a convenience default protocol if
+      # most of your services are of the same protocol type. The individual annotation
+      # on any given pod will override this value. A protocol must be provided,
+      # either through this setting or individual annotation, for a service to be
+      # registered correctly. Valid values are "http", "http2", "grpc" and "tcp".
+      defaultProtocol: null
+
+      # proxyDefaults is a raw json string that will be applied to all Connect
+      # proxy sidecar pods that can include any valid configuration for the
+      # configured proxy.
+      proxyDefaults: |
+        {}
+
+mongodb:
+  image:
+    ## Bitnami MongoDB registry
+    ##
+    registry: docker.io
+    ## Bitnami MongoDB image name
+    ##
+    repository: bitnami/mongodb
+    ## Bitnami MongoDB image tag
+    ## ref: https://hub.docker.com/r/bitnami/mongodb/tags/
+    ##
+    tag: 4.0.1-debian-9
+
+    ## Specify a imagePullPolicy
+    ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+    ##
+    pullPolicy: Always
+    ## Optionally specify an array of imagePullSecrets.
+    ## Secrets must be manually created in the namespace.
+    ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+    ##
+    # pullSecrets:
+    #   - myRegistrKeySecretName
+
+  ## Enable authentication
+  ## ref: https://docs.mongodb.com/manual/tutorial/enable-authentication/
+  #
+  usePassword: true
+  # existingSecret: name-of-existing-secret
+
+  ## MongoDB admin password
+  ## ref: https://github.com/bitnami/bitnami-docker-mongodb/blob/master/README.md#setting-the-root-password-on-first-run
+  ##
+  mongodbRootPassword: noc
+
+  ## MongoDB custom user and database
+  ## ref: https://github.com/bitnami/bitnami-docker-mongodb/blob/master/README.md#creating-a-user-and-database-on-first-run
+  ##
+  mongodbUsername: noc
+  mongodbPassword: noc
+  mongodbDatabase: noc
+
+  ## MongoDB additional command line flags
+  ##
+  ## Can be used to specify command line flags, for example:
+  ##
+  ## mongodbExtraFlags:
+  ##  - "--wiredTigerCacheSizeGB=2"
+  mongodbExtraFlags: ["--wiredTigerCacheSizeGB=2" ]
+
+  ## Pod Security Context
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  ##
+  securityContext:
+    enabled: true
+    fsGroup: 1001
+    runAsUser: 1001
+
+  ## Kubernetes service type
+  service:
+    type: ClusterIP
+    port: 27017
+
+    ## Specify the nodePort value for the LoadBalancer and NodePort service types.
+    ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
+    ##
+    # nodePort:
+
+
+  replicaSet:
+    ## Whether to create a MongoDB replica set for high availability or not
+    enabled: false
+    ## Name of the replica set
+    ##
+    name: noc
+
+    ## Key used for replica set authentication
+    ##
+    # key: key
+
+    ## Number of replicas per each node type
+    ##
+    replicas:
+      secondary: 0
+      arbiter: 0
+    ## Pod Disruption Budget
+    ## ref: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
+    pdb:
+      minAvailable:
+        primary: 1
+        secondary: 0
+        arbiter: 0
+
+  # Annotations to be added to MongoDB pods
+  podAnnotations: {}
+
+  ## Configure resource requests and limits
+  ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+  ## Node selector
+  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
+  nodeSelector: {}
+
+  ## Affinity
+  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+  affinity: {}
+
+  ## Tolerations
+  ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  #tolerations: [NoSchedule]
+
+  ## Enable persistence using Persistent Volume Claims
+  ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
+  ##
+  persistence:
+    enabled: true
+    ## A manually managed Persistent Volume and Claim
+    ## Requires persistence.enabled: true
+    ## If defined, PVC must be created manually before volume will be bound
+    # existingClaim:
+
+    ## mongodb data Persistent Volume Storage Class
+    ## If defined, storageClassName: <storageClass>
+    ## If set to "-", storageClassName: "", which disables dynamic provisioning
+    ## If undefined (the default) or set to null, no storageClassName spec is
+    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+    ##   GKE, AWS & OpenStack)
+    ##
+    #storageClass: "hdd"
+    accessModes:
+      - ReadWriteOnce
+    size: 1Gi
+    annotations: {}
+
+  ## Configure extra options for liveness and readiness probes
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes)
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+
+  # Entries for the MongoDB config file
+  configmap:
+  #  # Where and how to store data.
+  #  storage:
+  #    dbPath: /opt/bitnami/mongodb/data/db
+  #    journal:
+  #      enabled: true
+  #    #engine:
+  #    #wiredTiger:
+  #  # where to write logging data.
+  #  systemLog:
+  #    destination: file
+  #    logAppend: true
+  #    path: /opt/bitnami/mongodb/logs/mongodb.log
+  #  # network interfaces
+  #  net:
+  #    port: 27017
+  #    bindIp: 0.0.0.0
+  #    unixDomainSocket:
+  #      enabled: true
+  #      pathPrefix: /opt/bitnami/mongodb/tmp
+  #  # replica set options
+  #  #replication:
+  #  #  replSetName: replicaset
+  #  # process management options
+  #  processManagement:
+  #     fork: false
+  #     pidFilePath: /opt/bitnami/mongodb/tmp/mongodb.pid
+  #  # set parameter options
+  #  setParameter:
+  #     enableLocalhostAuthBypass: true
+  #  # security options
+  #  security:
+  #    authorization: enabled
+  #    #keyFile: /opt/bitnami/mongodb/conf/keyfile
+
+# we are not expecting any changes below this line. change it when you know what are you doing
+#-------------------------------------------------------------------------------
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  activator:
+    limits:
+      cpu: 250m
+      memory: 150Mi
+    requests:
+      cpu: 50m
+      memory: 150Mi
+  bi:
+    limits:
+      cpu: 500m
+      memory: 100Mi
+    requests:
+      cpu: 50m
+      memory: 100Mi
+  card:
+    limits:
+      cpu: 500m
+      memory: 150Mi
+    requests:
+      cpu: 50m
+      memory: 150Mi
+  chwriter:
+    limits:
+      cpu: 250m
+      memory: 90Mi
+    requests:
+      cpu: 50m
+      memory: 90Mi
+  classifier:
+    limits:
+      cpu: 1
+      memory: 120Mi
+    requests:
+      cpu: 50m
+      memory: 120Mi
+  correlator:
+    limits:
+      cpu: 1
+      memory: 120Mi
+    requests:
+      cpu: 50m
+      memory: 120Mi
+  datasource:
+    limits:
+      cpu: 500m
+      memory: 300Mi
+    requests:
+      cpu: 50m
+      memory: 300Mi
+  datastream:
+    limits:
+      cpu: 500m
+      memory: 110Mi
+    requests:
+      cpu: 50m
+      memory: 110Mi
+  discovery:
+    limits:
+      cpu: 1
+      memory: 150Mi
+    requests:
+      cpu: 50m
+      memory: 150Mi
+  escalator:
+    limits:
+      cpu: 100m
+      memory: 90Mi
+    requests:
+      cpu: 100m
+      memory: 90Mi
+  front:
+    limits:
+      cpu: 500m
+      memory: 50Mi
+    requests:
+      cpu: 10m
+      memory: 50Mi
+  grafanads:
+    limits:
+      cpu: 100m
+      memory: 110Mi
+    requests:
+      cpu: 50m
+      memory: 110Mi
+  login:
+    limits:
+      cpu: 250m
+      memory: 75Mi
+    requests:
+      cpu: 50m
+      memory: 75Mi
+  mailsender:
+    limits:
+      cpu: 100m
+      memory: 52Mi
+    requests:
+      cpu: 50m
+      memory: 52Mi
+  mib:
+    limits:
+      cpu: 100m
+      memory: 100Mi
+    requests:
+      cpu: 100m
+      memory: 100Mi
+  mrt:
+    limits:
+      cpu: 100m
+      memory: 103Mi
+    requests:
+      cpu: 50m
+      memory: 103Mi
+  nbi:
+    limits:
+      cpu: 250m
+      memory: 100Mi
+    requests:
+      cpu: 50m
+      memory: 100Mi
+  ping:
+    limits:
+      cpu: 100m
+      memory: 50Mi
+    requests:
+      cpu: 50m
+      memory: 50Mi
+  sae:
+    limits:
+      cpu: 500m
+      memory: 85Mi
+    requests:
+      cpu: 50m
+      memory: 85Mi
+  scheduler:
+    limits:
+      cpu: 100m
+      memory: 150Mi
+    requests:
+      cpu: 50m
+      memory: 150Mi
+  selfmon:
+    limits:
+      cpu: 250m
+      memory: 110Mi
+    requests:
+      cpu: 50m
+      memory: 110Mi
+  static:
+    limits:
+      cpu: 10m
+      memory: 50Mi
+    requests:
+      cpu: 10m
+      memory: 50Mi
+  syslogcollector:
+    limits:
+      cpu: 200m
+      memory: 80Mi
+    requests:
+      cpu: 50m
+      memory: 80Mi
+  tgsender:
+    limits:
+      cpu: 100m
+      memory: 52Mi
+    requests:
+      cpu: 100m
+      memory: 52Mi
+  trapcollector:
+    limits:
+      cpu: 200m
+      memory: 80Mi
+    requests:
+      cpu: 50m
+      memory: 80Mi
+  web:
+    limits:
+      cpu: 1
+      memory: 120Mi
+    requests:
+      cpu: 50m
+      memory: 120Mi
+
+# if you are using custom image and have to authenticate to pull image
+# here it is
+imagePullSecrets: []
+
+# Quotas
+# You do not want to add this manifest to you production environment.
+# You mostly don't want to add this to even you test environment without changes.
+# Quota will break your environment and eat your hamburger instead of you.
+quotas:
+  enable: false
+
+tolerations:
+  activator: []
+  bi: []
+  card: []
+  chwriter: []
+  classifier: []
+  correlator: []
+  datasource: []
+  datastream: []
+  discovery: []
+  escalator: []
+  front: []
+  grafanads: []
+  login: []
+  mailsender: []
+  mib: []
+  mrt: []
+  nbi: []
+  ping: []
+  sae: []
+  scheduler: []
+  selfmon: []
+  static: []
+  syslogcollector: []
+  tgsender: []
+  trapcollector: []
+  web: []
+
+
+affinity:
+  activator: {}
+  bi: {}
+  card: {}
+  chwriter: {}
+  classifier: {}
+  correlator: {}
+  datasource: {}
+  datastream: {}
+  discovery: {}
+  escalator: {}
+  front: {}
+  grafanads: {}
+  login: {}
+  mailsender: {}
+  mib: {}
+  mrt: {}
+  nbi: {}
+  ping: {}
+  sae: {}
+  scheduler: {}
+  selfmon: {}
+  static: {}
+  syslogcollector: {}
+  tgsender: {}
+  trapcollector: {}
+  web: {}

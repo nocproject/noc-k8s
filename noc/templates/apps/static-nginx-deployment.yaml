@@ -1,0 +1,79 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "noc.static.fullname" . }}
+  labels:
+    service: static
+{{ include "noc.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount.global.static }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "noc.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      service: static
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "noc.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        service: static
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      containers:
+        - command: null
+          image: 'registry.getnoc.com/noc/noc/static:19.2-dev'
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /ng_stats
+              port: 81
+            initialDelaySeconds: 10
+          name: nginx
+          readinessProbe:
+            httpGet:
+              path: /ng_stats
+              port: 81
+            initialDelaySeconds: 5
+          resources:
+            {{- toYaml .Values.resources.static | nindent 12 }}
+          volumeMounts:
+            - mountPath: /etc/nginx
+              name: nginx-configmap
+              readOnly: true
+      priorityClassName: noc-nginx
+      volumes:
+        - configMap:
+            items:
+              - key: nginx.conf
+                path: nginx.conf
+              - key: noc.conf
+                path: conf.d/noc.conf
+              - key: hc.conf
+                path: conf.d/hc.conf
+              - key: mime.types
+                path: mime.types
+            name: nginx-configmap
+          name: nginx-configmap
+      serviceAccountName: noc-service-account
+      {{- with .Values.nodeSelector.static }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity.static }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations.static }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

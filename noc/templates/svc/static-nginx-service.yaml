@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "noc.static.fullname" . }}
+  labels:
+    service: static
+{{ include "noc.labels" . | indent 4 }}
+spec:
+  clusterIP: None
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: http
+  selector:
+    service: static
+    app.kubernetes.io/name: {{ include "noc.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}

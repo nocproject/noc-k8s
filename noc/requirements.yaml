@@ -1,0 +1,13 @@
+dependencies:
+  - name: consul
+    version: 3.7.0
+    repository: "@stable"
+  - name: mongodb
+    version: 6.1.5
+    repository: "@stable"
+  - name: postgresql
+    version: 0.15.0
+    repository: "@stable"
+  - name: grafana
+    version: 3.5.12
+    repository: "@stable"

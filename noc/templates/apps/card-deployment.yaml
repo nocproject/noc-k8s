@@ -1,0 +1,74 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "noc.card.fullname" . }}
+  labels:
+    service: card
+{{ include "noc.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount.global.card }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "noc.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      service: card
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "noc.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        service: card
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      containers:
+        - command:
+            - python
+            - services/card/service.py
+          envFrom:
+            - configMapRef:
+                name: noc-configmap
+            - secretRef:
+                name: noc-secret
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          livenessProbe:
+            httpGet:
+              path: /mon/
+              port: 1200
+            initialDelaySeconds: 10
+          name: card
+          ports:
+            - containerPort: 1200
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /mon/
+              port: 1200
+          resources:
+            {{- toYaml .Values.resources.card | nindent 12 }}
+          securityContext:
+            runAsUser: 1200
+      priorityClassName: noc-card
+      serviceAccountName: noc-service-account
+      terminationGracePeriodSeconds: 30
+      {{- with .Values.nodeSelector.card }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity.card }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations.card }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

@@ -1,0 +1,21 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "noc.ping.fullname" . }}
+  labels:
+    service: ping
+    pool: default
+{{ include "noc.labels" . | indent 4 }}
+spec:
+  clusterIP: None
+  ports:
+    - name: http
+      port: 1200
+      protocol: TCP
+      targetPort: http
+  selector:
+    service: ping
+    pool: default
+    app.kubernetes.io/name: {{ include "noc.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
