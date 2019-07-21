@@ -1,0 +1,83 @@
+{{- $root := . }}
+{{- range $pool, $pool_info:= .Values.service_config.pools }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ printf "%s-classifier-%s" $root.Release.Name $pool | trunc 63 | trimSuffix "-" }}
+  labels:
+    service: classifier
+    pool: {{ $pool }}
+{{ include "noc.labels" $root | indent 4 }}
+spec:
+  replicas: {{ $pool_info.classifier.count }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "noc.name" $root }}
+      app.kubernetes.io/instance: {{ $root.Release.Name }}
+      service: classifier
+      pool: {{ $pool }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "noc.name" $root }}
+        app.kubernetes.io/instance: {{ $root.Release.Name }}
+        service: classifier
+        pool: {{ $pool }}
+    spec:
+    {{- with $root.Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      containers:
+        - command:
+            - python
+            - services/classifier/service.py
+          env:
+            - name: NOC_POOL
+              value: {{ $pool }}
+          envFrom:
+            - configMapRef:
+                name: noc-configmap
+            - secretRef:
+                name: noc-secret
+          image: "{{ $root.Values.image.repository }}:{{ $root.Values.image.tag }}"
+          imagePullPolicy: {{ $root.Values.image.pullPolicy }}
+          livenessProbe:
+            httpGet:
+              path: /mon/
+              port: 1200
+            initialDelaySeconds: 10
+          name: classifier-{{ $pool }}
+          ports:
+            - containerPort: 1200
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /mon/
+              port: 1200
+          resources:
+            {{- toYaml $root.Values.resources.classifier | nindent 12 }}
+          securityContext:
+            runAsUser: 1200
+      priorityClassName: noc-classifier
+      serviceAccountName: noc-service-account
+      terminationGracePeriodSeconds: 30
+      {{- with $pool_info.classifier.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with $pool_info.classifier.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with $root.Values.tolerations.classifier }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+{{- end }}

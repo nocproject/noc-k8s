@@ -7,7 +7,7 @@ metadata:
     service: mib
 {{ include "noc.labels" . | indent 4 }}
 spec:
-  replicas: {{ .Values.replicaCount.global.mib }}
+  replicas: {{ .Values.service_config.global.mib.count }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "noc.name" . }}
@@ -58,11 +58,11 @@ spec:
             runAsUser: 1200
       priorityClassName: noc-mib
       terminationGracePeriodSeconds: 30
-      {{- with .Values.nodeSelector.mib }}
+      {{- with .Values.service_config.global.mib.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-    {{- with .Values.affinity.mib }}
+    {{- with .Values.service_config.global.mib.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
     {{- end }}

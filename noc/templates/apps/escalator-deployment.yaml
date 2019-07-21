@@ -7,7 +7,7 @@ metadata:
     service: escalator
 {{ include "noc.labels" . | indent 4 }}
 spec:
-  replicas: {{ .Values.replicaCount.global.escalator }}
+  replicas: {{ .Values.service_config.global.escalator.count }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "noc.name" . }}
@@ -60,11 +60,11 @@ spec:
       priorityClassName: noc-escalator
       serviceAccountName: noc-service-account
       terminationGracePeriodSeconds: 30
-      {{- with .Values.nodeSelector.escalator }}
+      {{- with .Values.service_config.global.escalator.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-    {{- with .Values.affinity.escalator }}
+    {{- with .Values.service_config.global.escalator.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
     {{- end }}

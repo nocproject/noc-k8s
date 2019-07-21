@@ -7,7 +7,7 @@ metadata:
     service: front-nginx
 {{ include "noc.labels" . | indent 4 }}
 spec:
-  replicas: {{ .Values.replicaCount.global.front }}
+  replicas: {{ .Values.service_config.global.front.count }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "noc.name" . }}
@@ -67,11 +67,11 @@ spec:
             name: front-nginx-configmap
           name: front-nginx-configmap
       serviceAccountName: noc-service-account
-      {{- with .Values.nodeSelector.front }}
+      {{- with .Values.service_config.global.front.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-    {{- with .Values.affinity.front }}
+    {{- with .Values.service_config.global.front.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
     {{- end }}

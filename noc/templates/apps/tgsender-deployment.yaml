@@ -7,7 +7,7 @@ metadata:
     service: tgsender
 {{ include "noc.labels" . | indent 4 }}
 spec:
-  replicas: {{ .Values.replicaCount.global.tgsender }}
+  replicas: {{ .Values.service_config.global.tgsender.count }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "noc.name" . }}
@@ -60,11 +60,11 @@ spec:
       priorityClassName: noc-tgsender
       serviceAccountName: noc-service-account
       terminationGracePeriodSeconds: 30
-      {{- with .Values.nodeSelector.tgsender }}
+      {{- with .Values.service_config.global.tgsender.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-    {{- with .Values.affinity.tgsender }}
+    {{- with .Values.service_config.global.tgsender.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
     {{- end }}

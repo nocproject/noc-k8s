@@ -7,40 +7,156 @@ image:
   tag: 19.2-dev
   pullPolicy: IfNotPresent
 
-replicaCount:
+service_config:
   global:
-    bi: 1
-    card: 1
-    chwriter: 1
-    datasource: 1
-    datastream: 1
-    escalator: 1
-    grafanads: 1
-    login: 1
-    mailsender: 1
-    mib: 1
-    mrt: 1
-    nbi: 1
-    sae: 1
-    scheduler: 1
-    selfmon: 1
-    tgsender: 1
-    web: 1
+    bi:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    card:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    chwriter:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    datasource:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    datastream:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    escalator:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    front:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    grafanads:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    login:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    mailsender:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    mib:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    mrt:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    nbi:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    sae:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    scheduler:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    static:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    selfmon:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    tgsender:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    web:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
   pools:
     default:
-      activator: 1
-      classifier: 1
-      correlator: 1
-      discovery: 1
-      ping: 1
-      syslogcollector: 1
-      trapcollector: 1
-
+      activator:
+        count: 1
+        nodeSelector:
+          pool: default
+        affinity: {}
+      classifier:
+        count: 1
+        nodeSelector: {}
+        affinity: {}
+      correlator:
+        count: 1
+        nodeSelector: {}
+        affinity: {}
+      discovery:
+        count: 1
+        nodeSelector: {}
+        affinity: {}
+      ping:
+        count: 1
+        nodeSelector:
+          pool: default
+        affinity: {}
+      syslogcollector:
+        count: 1
+        nodeSelector:
+          pool: default
+        affinity: {}
+      trapcollector:
+        count: 1
+        nodeSelector:
+          pool: default
+        affinity: {}
+    second:
+      activator:
+        count: 1
+        nodeSelector:
+          pool: second
+        affinity: {}
+      classifier:
+        count: 1
+        nodeSelector: {}
+        affinity: {}
+      correlator:
+        count: 1
+        nodeSelector: {}
+        affinity: {}
+      discovery:
+        count: 1
+        nodeSelector: {}
+        affinity: {}
+      ping:
+        count: 1
+        nodeSelector:
+          pool: second
+        affinity: {}
+      syslogcollector:
+        count: 1
+        nodeSelector:
+          pool: second
+        affinity: {}
+      trapcollector:
+        count: 1
+        nodeSelector:
+          pool: second
+        affinity: {}
 ingress:
   enabled: true
   annotations:
-     kubernetes.io/ingress.class: nginx
-     kubernetes.io/tls-acme: "true"
+#     kubernetes.io/ingress.class: nginx
+#     kubernetes.io/tls-acme: "true"
   hosts:
     - host: chart-example.local
       paths: []
@@ -49,34 +165,6 @@ ingress:
     - secretName: chart-example-tls
       hosts:
         - chart-example.local
-
-nodeSelector:
-  global:
-    bi: {}
-    card: {}
-    chwriter: {}
-    datasource: {}
-    datastream: {}
-    escalator: {}
-    grafanads: {}
-    login: {}
-    mailsender: {}
-    mib: {}
-    mrt: {}
-    nbi: {}
-    sae: {}
-    scheduler: {}
-    selfmon: {}
-    tgsender: {}
-    web: {}
-  pool-default:
-    activator: {}
-    classifier: {}
-    correlator: {}
-    discovery: {}
-    ping: {}
-    syslogcollector: {}
-    trapcollector: {}
 
 clickhouse:
   users:
@@ -1059,32 +1147,3 @@ tolerations:
   tgsender: []
   trapcollector: []
   web: []
-
-
-affinity:
-  activator: {}
-  bi: {}
-  card: {}
-  chwriter: {}
-  classifier: {}
-  correlator: {}
-  datasource: {}
-  datastream: {}
-  discovery: {}
-  escalator: {}
-  front: {}
-  grafanads: {}
-  login: {}
-  mailsender: {}
-  mib: {}
-  mrt: {}
-  nbi: {}
-  ping: {}
-  sae: {}
-  scheduler: {}
-  selfmon: {}
-  static: {}
-  syslogcollector: {}
-  tgsender: {}
-  trapcollector: {}
-  web: {}

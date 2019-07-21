@@ -7,7 +7,7 @@ metadata:
     service: selfmon
 {{ include "noc.labels" . | indent 4 }}
 spec:
-  replicas: {{ .Values.replicaCount.global.selfmon }}
+  replicas: {{ .Values.service_config.global.selfmon.count }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "noc.name" . }}
@@ -60,11 +60,11 @@ spec:
       priorityClassName: noc-selfmon
       serviceAccountName: noc-service-account
       terminationGracePeriodSeconds: 30
-      {{- with .Values.nodeSelector.selfmon }}
+      {{- with .Values.service_config.global.selfmon.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-    {{- with .Values.affinity.selfmon }}
+    {{- with .Values.service_config.global.selfmon.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
     {{- end }}

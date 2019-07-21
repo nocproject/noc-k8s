@@ -7,7 +7,7 @@ metadata:
     service: mailsender
 {{ include "noc.labels" . | indent 4 }}
 spec:
-  replicas: {{ .Values.replicaCount.global.mailsender }}
+  replicas: {{ .Values.service_config.global.mailsender.count }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "noc.name" . }}
@@ -60,11 +60,11 @@ spec:
       priorityClassName: noc-mailsender
       serviceAccountName: noc-service-account
       terminationGracePeriodSeconds: 30
-      {{- with .Values.nodeSelector.mailsender }}
+      {{- with .Values.service_config.global.mailsender.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-    {{- with .Values.affinity.mailsender }}
+    {{- with .Values.service_config.global.mailsender.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
     {{- end }}

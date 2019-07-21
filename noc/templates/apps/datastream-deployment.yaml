@@ -7,7 +7,7 @@ metadata:
     service: datastream
 {{ include "noc.labels" . | indent 4 }}
 spec:
-  replicas: {{ .Values.replicaCount.global.datastream }}
+  replicas: {{ .Values.service_config.global.datastream.count }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "noc.name" . }}
@@ -60,11 +60,11 @@ spec:
       priorityClassName: noc-datastream
       serviceAccountName: noc-service-account
       terminationGracePeriodSeconds: 30
-      {{- with .Values.nodeSelector.datastream }}
+      {{- with .Values.service_config.global.datastream.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-    {{- with .Values.affinity.datastream }}
+    {{- with .Values.service_config.global.datastream.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
     {{- end }}

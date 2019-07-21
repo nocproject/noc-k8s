@@ -7,7 +7,7 @@ metadata:
     service: datasource
 {{ include "noc.labels" . | indent 4 }}
 spec:
-  replicas: {{ .Values.replicaCount.global.datasource }}
+  replicas: {{ .Values.service_config.global.datasource.count }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "noc.name" . }}
@@ -60,11 +60,11 @@ spec:
       priorityClassName: noc-datasource
       serviceAccountName: noc-service-account
       terminationGracePeriodSeconds: 30
-      {{- with .Values.nodeSelector.datasource }}
+      {{- with .Values.service_config.global.datasource.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-    {{- with .Values.affinity.datasource }}
+    {{- with .Values.service_config.global.datasource.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
     {{- end }}

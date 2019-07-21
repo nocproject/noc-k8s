@@ -7,7 +7,7 @@ metadata:
     service: mrt
 {{ include "noc.labels" . | indent 4 }}
 spec:
-  replicas: {{ .Values.replicaCount.global.mrt }}
+  replicas: {{ .Values.service_config.global.mrt.count }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "noc.name" . }}
@@ -60,11 +60,11 @@ spec:
       priorityClassName: noc-mrt
       serviceAccountName: noc-service-account
       terminationGracePeriodSeconds: 30
-      {{- with .Values.nodeSelector.mrt }}
+      {{- with .Values.service_config.global.mrt.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-    {{- with .Values.affinity.mrt }}
+    {{- with .Values.service_config.global.mrt.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
     {{- end }}

@@ -1,0 +1,23 @@
+{{- $root := . }}
+{{- range $pool, $pool_info:= .Values.service_config.pools }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ printf "%s-discovery-%s" $root.Release.Name $pool | trunc 63 | trimSuffix "-" }}
+  labels:
+    service: discovery
+    pool: {{ $pool }}
+{{ include "noc.labels" $root | indent 4 }}
+spec:
+  ports:
+    - name: http
+      port: 1200
+      protocol: TCP
+      targetPort: http
+  selector:
+    app.kubernetes.io/name: {{ include "noc.name" $root }}
+    app.kubernetes.io/instance: {{ $root.Release.Name }}
+    service: discovery
+    pool: {{ $pool }}
+  {{ end }}
