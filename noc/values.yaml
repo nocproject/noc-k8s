@@ -119,39 +119,42 @@ service_config:
         nodeSelector:
           pool: default
         affinity: {}
-    second:
-      activator:
-        count: 1
-        nodeSelector:
-          pool: second
-        affinity: {}
-      classifier:
-        count: 1
-        nodeSelector: {}
-        affinity: {}
-      correlator:
-        count: 1
-        nodeSelector: {}
-        affinity: {}
-      discovery:
-        count: 1
-        nodeSelector: {}
-        affinity: {}
-      ping:
-        count: 1
-        nodeSelector:
-          pool: second
-        affinity: {}
-      syslogcollector:
-        count: 1
-        nodeSelector:
-          pool: second
-        affinity: {}
-      trapcollector:
-        count: 1
-        nodeSelector:
-          pool: second
-        affinity: {}
+#    second:
+#      activator:
+#        count: 1
+#        nodeSelector:
+#          pool: second
+#        affinity: {}
+#      classifier:
+#        count: 1
+#        nodeSelector: {}
+#        affinity: {}
+#      correlator:
+#        count: 1
+#        nodeSelector: {}
+#        affinity: {}
+#      discovery:
+#        count: 1
+#        nodeSelector: {}
+#        affinity: {}
+#      ping:
+#        count: 1
+#        nodeSelector:
+#          pool: second
+#        affinity: {}
+#      syslogcollector:
+#        count: 1
+#        nodeSelector:
+#          pool: second
+#        affinity: {}
+#      trapcollector:
+#        count: 1
+#        nodeSelector:
+#          pool: second
+#        affinity: {}
+
+nocExtraConfiguration: |
+  NOC_LOGLEVEL: info
 
 ingress:
   enabled: true
@@ -197,21 +200,22 @@ consul:
     image: "consul:1.5.2"
   server:
     replicas: 1
-    bootstrapExpect: 1 # Should <= replicas count
+    bootstrapExpect: 1  # Should <= replicas count
     storage: 1Gi
     disruptionBudget:
       enabled: false
-    affinity: {}
+  client:
+    enabled: "False"
   ui:
     enabled: "True"
   syncCatalog:
-    enabled: true
+    enabled: false
+    toConsul: false
+    toK8S: false
   connectInject:
-    enabled: true
-    default: true # true will inject by default, otherwise requires annotation
-    namespaceSelector:
-      matchLabels:
-        consul-sidecar-injector: enabled
+    enabled: false
+    default: false  # true will inject by default, otherwise requires annotation
+    namespaceSelector: null
 
 mongodb:
   tag: 4.0.10-debian-9-r53
