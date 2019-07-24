@@ -1,5 +1,6 @@
 {{- $root := . }}
 {{- range $pool, $pool_info:= .Values.service_config.pools }}
+{{- if index $pool_info "activator" }}
 ---
 apiVersion: v1
 kind: Service
@@ -21,4 +22,5 @@ spec:
     app.kubernetes.io/instance: {{ $root.Release.Name }}
     service: activator
     pool: {{ $pool }}
+{{ end }}
 {{ end }}
