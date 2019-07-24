@@ -163,6 +163,7 @@ noc_web:
   tls_secretName: noc-k8s.getnoc.com-tls
 
 clickhouse:
+  enabled: true
   users:
     ro_user_name: default
     ro_user_password: noc
@@ -175,12 +176,14 @@ clickhouse:
     size: 2Gi
 
 nsqd:
+  enabled: true
   replicaCount:
     admin: 1
     nsqd: 1
     lookupd: 1
 
 postgresql:
+  enabled: true
   postgresUser: noc
   postgresPassword: noc
   postgresDatabase: noc
@@ -188,6 +191,7 @@ postgresql:
     size: 1Gi
 
 consul:
+  enabled: true
   global:
     image: "consul:1.5.2"
   server:
@@ -210,6 +214,7 @@ consul:
     namespaceSelector: null
 
 mongodb:
+  enabled: true
   tag: 4.0.10-debian-9-r53
   mongodbRootPassword: noc
   mongodbUsername: noc

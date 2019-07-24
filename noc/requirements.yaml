@@ -2,18 +2,28 @@ dependencies:
   - name: consul
     version: 0.8.1
     repository: "file://charts/consul"
+    condition: consul.enabled
+
   - name: clickhouse
     version: 0.1.0
     repository: "file://charts/clickhouse"
+    condition: clickhouse.enabled
+
   - name: nsqd
     version: 0.1.0
     repository: "file://charts/nsqd"
+    condition: nsqd.enabled
+
   - name: mongodb
     version: 6.1.5
     repository: "@stable"
+    condition: mongodb.enabled
+
   - name: postgresql
     version: 0.15.0
     repository: "@stable"
+    condition: postgresql.enabled
+
   - name: grafana
     version: 3.5.12
     repository: "@stable"
