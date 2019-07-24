@@ -24,7 +24,7 @@ helm init --service-account tiller --history-max 1 --upgrade
 * copy `noc/values.yaml` to `noc/my_values.yaml`  edit it 
 and than install noc with 
 ```
-helm upgrade --install --wait --atomic noc noc/
+helm upgrade --install --atomic noc noc --values my_values.yaml
 ```
 
 Be aware that now for dev purpose there are noc-k8s.getnoc.com tls secret 
