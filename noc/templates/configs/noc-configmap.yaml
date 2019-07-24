@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: noc-configmap
+  name: {{ .Release.Name }}-noc-configmap
 data:
   NOC_CONSUL_HOST: '{{ .Release.Name }}-consul-server'
   NOC_CLICKHOUSE_RO_ADDRESSES: '{{ .Release.Name }}-clickhouse:8123'
