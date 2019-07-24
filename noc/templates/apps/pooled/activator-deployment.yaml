@@ -1,5 +1,6 @@
 {{- $root := . }}
 {{- range $pool, $pool_info:= .Values.service_config.pools }}
+{{- if index $pool_info "activator" }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -43,10 +44,10 @@ spec:
               value: {{ $pool }}
           envFrom:
             - configMapRef:
-                name: noc-configmap
+                name: {{ $root.Release.Name }}-noc-configmap
             - secretRef:
-                name: noc-secret
-          image: "{{ $root.Values.image.repository }}:{{ $root.Values.image.tag }}"
+                name: {{ $root.Release.Name }}-noc-secret
+          image: "{{ $root.Values.image.repository }}/code:{{ $root.Values.image.tag }}"
           imagePullPolicy: {{ $root.Values.image.pullPolicy }}
           livenessProbe:
             httpGet:
@@ -80,4 +81,5 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+{{- end }}
 {{- end }}
