@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: front-nginx-configmap
+  name: {{ .Release.Name }}-front-nginx-configmap
 data:
   nginx.conf: |
     user  nginx;
@@ -75,7 +75,7 @@ data:
     }
 
     upstream grafana {
-      server {{ template "noc.login.fullname" . }}:1200 weight=1 max_fails=3 fail_timeout=10;
+      server {{ .Release.Name}}-grafana:80 weight=1 max_fails=3 fail_timeout=10;
     }
 
     upstream grafanads {
@@ -91,7 +91,6 @@ data:
         gzip on;
         gzip_vary on;
         gzip_comp_level 3;
-        gzip_types text/html;
         gzip_types text/json;
         gzip_types text/css;
         gzip_types text/x-js;
@@ -99,9 +98,6 @@ data:
         gzip_types application/x-javascript;
         gzip_types application/json;
         gzip_types application/javascript;
-
-        add_header Strict-Transport-Security
-                  "max-age=63072000; includeSubDomains";
 
         add_header X-Content-Type-Options nosniff;
         add_header X-Backend-Server $upstream_addr always;
@@ -118,16 +114,13 @@ data:
         error_page 401 = @error401;
 
         location @error401 {
-            return 302 /api/login/index.html?uri=$request_uri;
+            return 302 https://{{ .Values.noc_web.address }}/api/login/index.html?uri=$request_uri;
         }
 
         # Login service api
         location /api/auth/ {
             internal;
             proxy_pass http://login;
-            # internal;
-            gzip on;
-            gzip_types text/css text/x-js;
             proxy_set_header Host $http_host;
             proxy_set_header X-Scheme $scheme;
             proxy_set_header X-Real-IP $remote_addr;
@@ -140,8 +133,6 @@ data:
         # Login service api
         location /api/login/ {
             proxy_pass http://login;
-            gzip on;
-            gzip_types text/css text/x-js;
             proxy_set_header Host $http_host;
             proxy_set_header X-Scheme $scheme;
             proxy_set_header X-Real-IP $remote_addr;
@@ -154,55 +145,24 @@ data:
         location /api/card/ {
             proxy_pass http://card;
             auth_request /api/auth/auth/;
-            # internal;
-            gzip on;
-            gzip_types text/css text/x-js text/json;
-            proxy_set_header Host $http_host;
-            proxy_set_header X-Scheme $scheme;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
             auth_request_set $user $upstream_http_remote_user;
-            proxy_set_header Remote-User $user;
             auth_request_set $groups $upstream_http_remote_groups;
-            proxy_set_header Remote-Groups $groups;
         }
 
         # mrt service api
         location /api/mrt/ {
             proxy_pass http://mrt;
-            proxy_read_timeout 900;
             auth_request /api/auth/auth/;
-            # internal;
-            gzip on;
-            gzip_types text/css text/x-js text/json;
-            proxy_set_header Host $http_host;
-            proxy_set_header X-Scheme $scheme;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
             auth_request_set $user $upstream_http_remote_user;
-            proxy_set_header Remote-User $user;
             auth_request_set $groups $upstream_http_remote_groups;
-            proxy_set_header Remote-Groups $groups;
         }
 
         # bi service api
         location /api/bi/ {
             proxy_pass http://bi;
             auth_request /api/auth/auth/;
-            # internal;
-            gzip on;
-            gzip_types text/css text/x-js text/json;
-            proxy_set_header Host $http_host;
-            proxy_set_header X-Scheme $scheme;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
             auth_request_set $user $upstream_http_remote_user;
-            proxy_set_header Remote-User $user;
             auth_request_set $groups $upstream_http_remote_groups;
-            proxy_set_header Remote-Groups $groups;
         }
 
 
@@ -210,18 +170,8 @@ data:
         location /api/grafanads/ {
             proxy_pass http://grafanads;
             auth_request /api/auth/auth/;
-            # internal;
-            gzip on;
-            gzip_types text/css text/x-js;
-            proxy_set_header Host $http_host;
-            proxy_set_header X-Scheme $scheme;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
             auth_request_set $user $upstream_http_remote_user;
-            proxy_set_header Remote-User $user;
             auth_request_set $groups $upstream_http_remote_groups;
-            proxy_set_header Remote-Groups $groups;
         }
 
 
@@ -229,31 +179,45 @@ data:
         location /api/datastream/ {
             proxy_pass http://datastream;
             auth_request /api/auth/auth/;
-            gzip on;
-            gzip_types text/css text/x-js text/json;
+            auth_request_set $apiaccess $upstream_http_x_noc_api_access;
+            proxy_set_header Remote-User $user;
+            proxy_set_header Remote-Groups $groups;
             proxy_set_header Host $http_host;
             proxy_set_header X-Scheme $scheme;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
-            auth_request_set $apiaccess $upstream_http_x_noc_api_access;
             proxy_set_header X-NOC-API-Access $apiaccess;
         }
 
+        # nbi service api
+        location /api/nbi/ {
+            proxy_pass http://nbi;
+            auth_request /api/auth/auth/;
+            auth_request_set $apiaccess $upstream_http_x_noc_api_access;
+            proxy_set_header Remote-User $user;
+            proxy_set_header Remote-Groups $groups;
+            proxy_set_header Host $http_host;
+            proxy_set_header X-Scheme $scheme;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header X-NOC-API-Access $apiaccess;
+        }
 
         location /ui/grafana {
             proxy_pass http://grafana;
             auth_request /api/auth/auth/;
             rewrite  ^/ui/grafana/(.*)  /$1 break;
+            auth_request_set $user $upstream_http_remote_user;
+            auth_request_set $groups $upstream_http_remote_groups;
+            proxy_set_header Remote-User $user;
+            proxy_set_header Remote-Groups $groups;
             proxy_set_header Host $http_host;
             proxy_set_header X-Scheme $scheme;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
-            auth_request_set $user $upstream_http_remote_user;
-            proxy_set_header Remote-User $user;
-            auth_request_set $groups $upstream_http_remote_groups;
-            proxy_set_header Remote-Groups $groups;
             proxy_set_header Authorization "";
         }
 
@@ -261,17 +225,9 @@ data:
             rewrite ^/$ /main/desktop/;
             proxy_pass http://web;
             auth_request /api/auth/auth/;
-            gzip on;
-            gzip_types text/css text/x-js text/json;
-            proxy_set_header Host $http_host;
-            proxy_set_header X-Scheme $scheme;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
+
             auth_request_set $user $upstream_http_remote_user;
-            proxy_set_header Remote-User $user;
             auth_request_set $groups $upstream_http_remote_groups;
-            proxy_set_header Remote-Groups $groups;
         }
     }
 
