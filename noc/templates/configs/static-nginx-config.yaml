@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: nginx-configmap
+  name: {{ .Release.Name }}-static-nginx-configmap
 data:
   nginx.conf: |
     user  nginx;
@@ -49,34 +49,39 @@ data:
         listen 80 default_server reuseport;
         server_name _;
 
-        location /ng_stats {
-            stub_status;
-            # TODO: Add acl
-            access_log off;
-        }
+        gzip on;
+        gzip_vary on;
+        gzip_comp_level 3;
+        gzip_types text/json;
+        gzip_types text/css;
+        gzip_types text/x-js;
+        gzip_types text/javascript;
+        gzip_types application/x-javascript;
+        gzip_types application/json;
+        gzip_types application/javascript;
 
         # Legacy django media
         location ^~ /media/ {
             alias /usr/lib/python2.7/site-packages/django/contrib/admin/static/;
-            gzip on;
-            gzip_types text/css text/javascript application/x-javascript;
-            gzip_types application/json text/x-js application/javascript;
+            expires max;
+            add_header Cache-Control public;
+            add_header Pragma public;
         }
 
         # UI files
         location ^~ /ui/ {
             alias /opt/noc/ui/;
-            gzip on;
-            gzip_types text/css text/javascript application/x-javascript;
-            gzip_types application/json text/x-js application/javascript;
+            add_header Cache-Control public;
+            add_header Pragma public;
+            expires 1w;
         }
 
         location /ui/bi/editor/ {
             alias /opt/noc/ui/bi/;
             try_files $uri /index.html =404;
-            gzip on;
-            gzip_types text/css text/javascript application/x-javascript;
-            gzip_types application/json text/x-js application/javascript;
+            add_header Cache-Control public;
+            add_header Pragma public;
+            expires 1w;
         }
     }
 
