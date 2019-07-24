@@ -4,7 +4,7 @@ kind: Deployment
 metadata:
   name: {{ include "noc.front.fullname" . }}
   labels:
-    service: front-nginx
+    service: front
 {{ include "noc.labels" . | indent 4 }}
 spec:
   replicas: {{ .Values.service_config.global.front.count }}
@@ -12,7 +12,7 @@ spec:
     matchLabels:
       app.kubernetes.io/name: {{ include "noc.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
-      service: front-nginx
+      service: front
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -23,7 +23,7 @@ spec:
       labels:
         app.kubernetes.io/name: {{ include "noc.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
-        service: front-nginx
+        service: front
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -38,7 +38,10 @@ spec:
               path: /ng_stats
               port: 81
             initialDelaySeconds: 10
-          name: front-nginx
+          name: front
+          ports:
+            - containerPort: 80
+              name: http
           readinessProbe:
             httpGet:
               path: /ng_stats
@@ -48,7 +51,7 @@ spec:
             {{- toYaml .Values.resources.front | nindent 12 }}
           volumeMounts:
             - mountPath: /etc/nginx
-              name: front-nginx-configmap
+              name: {{ .Release.Name }}-front-nginx-configmap
               readOnly: true
       priorityClassName: noc-nginx
       volumes:
@@ -64,8 +67,8 @@ spec:
                 path: conf.d/hc.conf
               - key: mime.types
                 path: mime.types
-            name: front-nginx-configmap
-          name: front-nginx-configmap
+            name: {{ .Release.Name }}-front-nginx-configmap
+          name: {{ .Release.Name }}-front-nginx-configmap
       serviceAccountName: noc-service-account
       {{- with .Values.service_config.global.front.nodeSelector }}
       nodeSelector:

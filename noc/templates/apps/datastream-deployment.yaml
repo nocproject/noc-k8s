@@ -35,10 +35,10 @@ spec:
             - services/datastream/service.py
           envFrom:
             - configMapRef:
-                name: noc-configmap
+                name: {{ .Release.Name }}-noc-configmap
             - secretRef:
-                name: noc-secret
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+                name: {{ .Release.Name }}-noc-secret
+          image: "{{ .Values.image.repository }}/code:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           livenessProbe:
             httpGet:

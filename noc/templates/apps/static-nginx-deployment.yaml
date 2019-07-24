@@ -31,14 +31,17 @@ spec:
     {{- end }}
       containers:
         - command: null
-          image: 'registry.getnoc.com/noc/noc/static:19.2-dev'
-          imagePullPolicy: Always
+          image: "{{ .Values.image.repository }}/static:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           livenessProbe:
             httpGet:
               path: /ng_stats
               port: 81
             initialDelaySeconds: 10
           name: nginx
+          ports:
+            - containerPort: 80
+              name: http
           readinessProbe:
             httpGet:
               path: /ng_stats
@@ -48,7 +51,7 @@ spec:
             {{- toYaml .Values.resources.static | nindent 12 }}
           volumeMounts:
             - mountPath: /etc/nginx
-              name: nginx-configmap
+              name: {{ .Release.Name }}-static-nginx-configmap
               readOnly: true
       priorityClassName: noc-nginx
       volumes:
@@ -62,8 +65,8 @@ spec:
                 path: conf.d/hc.conf
               - key: mime.types
                 path: mime.types
-            name: nginx-configmap
-          name: nginx-configmap
+            name: {{ .Release.Name }}-static-nginx-configmap
+          name: {{ .Release.Name }}-static-nginx-configmap
       serviceAccountName: noc-service-account
       {{- with .Values.service_config.global.static.nodeSelector }}
       nodeSelector:
