@@ -1,43 +1,48 @@
 # Noc deployment via k8s
 
 
-## Alpha quality
+:warning Alpha quality
 
 
-read `run.sh` for more details.
+# Install 
 
-run_yandex sholud init yandex kubernetes if you already has one.
-teardown.sh -- should do its best to delete everything  
+* Get your kubernetes cluster up and running.
+* Get account info for your cluster. place it somewhere. fox example privs/ dir.
+ set that config as current.   
+```
+# auth info
+export KUBECONFIG=$PWD/privs/config
+```
 
+* (Optional) install and init tiller. Probably it is already done. but in case 
+it is not
+``` 
+kubectl apply -f tiller.yaml
+helm init --service-account tiller --history-max 1 --upgrade
+```
+
+* copy `noc/values.yaml` to `noc/my_values.yaml`  edit it 
+and than install noc with 
+```
+helm upgrade --install --wait --atomic noc noc/
+```
+
+Be aware that now for dev purpose there are noc-k8s.getnoc.com tls secret 
+bundled with chart. it will be remove in some time. 
+Go and get your oun tls cert for ingress 
+https://kubernetes.io/docs/concepts/services-networking/ingress/#tls 
+and apply it with 
+```
+kubectl apply -f ./noc/templates/configs/tls-secret.yaml
+```
 
 ## WARNING
 
-
-Security is not our focus on current stage of development. 
-We use "noc" for every password in system. 
-
-except web iface. there we use admin:admin 
-
-As for now we are expecting that pvc will have default storage class so we do not need to set them manually.
+As for now we are expecting that pvc will have default storage class 
+so we do not need to set them manually.
 
 ## Scope of current development
 
 for now scope of project reduced to
-- run dbs in single server mode without any ha. but persist db data to disks
-
-K3s specific notes
-==================
-
-fisrt of all you need a volume.
-
-`run_k3s.sh` will do it for you. 
-
-* to enable metrics server you have to patch 
-`/etc/systemd/system/k3s.service`
-and add 
-```
-ExecStart=/usr/local/bin/k3s server --kubelet-arg="address=0.0.0.0"
-```
-to the end of ExecStart
- `--kubelet-arg="address=0.0.0.0"` 
+* provide a way how to launch noc with external dbs. 
 
