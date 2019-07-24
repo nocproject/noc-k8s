@@ -7,7 +7,6 @@ metadata:
     service: sae
 {{ include "noc.labels" . | indent 4 }}
 spec:
-  clusterIP: None
   ports:
     - name: http
       port: 1200
