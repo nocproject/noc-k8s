@@ -1,0 +1,18 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-pool-configmap
+  labels:
+{{ include "noc.labels" . | indent 4 }}
+  annotations:
+    "helm.sh/hook": "post-install,post-upgrade"
+    "helm.sh/hook-delete-policy": "hook-succeeded,before-hook-creation"
+    "helm.sh/hook-weight": "5"
+data:
+  noc.yml: |
+    pools:
+  {{- range $pool, $pool_info:= .Values.service_config.pools }}
+      {{$pool}}:
+        description: {{ $pool_info.description}}
+  {{- end}}

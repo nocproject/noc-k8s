@@ -10,7 +10,7 @@ metadata:
     # job is considered part of the release.
     "helm.sh/hook": "post-install,post-upgrade"
     "helm.sh/hook-delete-policy": "hook-succeeded,before-hook-creation"
-    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-weight": "10"
 spec:
   template:
     spec:
@@ -21,27 +21,24 @@ spec:
             - >
               set -xe
               && /usr/bin/python ./commands/migrate.py
+              && /usr/bin/python ./scripts/deploy/apply-pools
               && ./noc ensure-indexes
               && /usr/bin/python ./commands/migrate-ch.py
               && /usr/bin/python ./scripts/deploy/install-packages requirements/collections.json
               && ./noc collection sync
               && ./noc sync-perm
               && ./noc sync-mibs
-              && mkdir -p /opt/noc/etc
-              && echo 'cG9vbHM6CiAgZGVmYXVsdDoKICAgIGRlc2NyaXB0aW9uOiBkZWZhdWx0Cg==' |base64 -d > /opt/noc/etc/noc.yml
-              && cat /opt/noc/etc/noc.yml
-              && /usr/bin/python ./scripts/deploy/apply-pools
           env:
             - name: NOC_PATH_NPKG_ROOT
               value: /tmp
           envFrom:
             - configMapRef:
-                name: noc-configmap
+                name: {{ .Release.Name }}-noc-configmap
             - secretRef:
-                name: noc-secret
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+                name: {{ .Release.Name }}-noc-secret
+          image: "{{ .Values.image.repository }}/code:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          name: init
+          name: db-init
           resources:
             limits:
               cpu: 1
@@ -51,5 +48,12 @@ spec:
               memory: 250Mi
           securityContext:
             runAsUser: 1200
+          volumeMounts:
+            - mountPath: /opt/noc/etc/
+              name: pool-config
+      volumes:
+        - name: pool-config
+          configMap:
+            name: {{ .Release.Name }}-pool-configmap
       restartPolicy: Never
       serviceAccountName: noc-service-account
