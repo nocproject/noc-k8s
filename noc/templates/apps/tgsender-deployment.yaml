@@ -57,8 +57,12 @@ spec:
             {{- toYaml .Values.resources.tgsender | nindent 12 }}
           securityContext:
             runAsUser: 1200
+    {{- if .Values.priorityClass.create }}
       priorityClassName: noc-tgsender
-      serviceAccountName: noc-service-account
+    {{- end }}
+    {{- if .Values.rbac.create }}
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+    {{- end}}
       terminationGracePeriodSeconds: 30
       {{- with .Values.service_config.global.tgsender.nodeSelector }}
       nodeSelector:

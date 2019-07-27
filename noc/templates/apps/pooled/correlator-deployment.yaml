@@ -66,8 +66,12 @@ spec:
             {{- toYaml $root.Values.resources.correlator | nindent 12 }}
           securityContext:
             runAsUser: 1200
+    {{- if $root.Values.priorityClass.create }}
       priorityClassName: noc-correlator
-      serviceAccountName: noc-service-account
+    {{- end }}
+    {{- if $root.Values.rbac.create }}
+      serviceAccountName: {{ $root.Values.serviceAccount.name }}
+    {{- end}}
       terminationGracePeriodSeconds: 30
       {{- with $pool_info.correlator.nodeSelector }}
       nodeSelector:

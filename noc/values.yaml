@@ -485,3 +485,43 @@ tolerations:
   tgsender: []
   trapcollector: []
   web: []
+
+rbac:
+  # Specifies whether RBAC resources should be created
+  create: false
+
+serviceAccount:
+  # Specifies whether a ServiceAccount should be created
+  create: false
+  # The name of the ServiceAccount to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: noc-service-account
+
+priorityClass:
+  create: false
+  classValue:
+    activator:        1000005
+    bi:               900000
+    card:             1000005
+    chwriter:         1000005
+    classifier:       1000005
+    correlator:       1000005
+    datasource:       1000005
+    datastream:       1000005
+    discovery:        1000005
+    escalator:        1000005
+    grafanads:        1000005
+    login:            1000005
+    mailsender:       1000005
+    mib:              500000
+    mrt:              1000005
+    nbi:              1000005
+    nginx:            1000005
+    ping:             1000005
+    sae:              1000005
+    scheduler:        1000005
+    selfmon:          1000005
+    syslogcollector:  1000005
+    tgsender:         1000005
+    trapcollector:    1000005
+    web:              1000005

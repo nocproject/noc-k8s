@@ -57,8 +57,12 @@ spec:
             {{- toYaml .Values.resources.datasource | nindent 12 }}
           securityContext:
             runAsUser: 1200
-      priorityClassName: noc-datasource
-      serviceAccountName: noc-service-account
+    {{- if .Values.priorityClass.create }}
+      priorityClassName: noc-chwriter
+    {{- end }}
+    {{- if .Values.rbac.create }}
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+    {{- end}}
       terminationGracePeriodSeconds: 30
       {{- with .Values.service_config.global.datasource.nodeSelector }}
       nodeSelector:

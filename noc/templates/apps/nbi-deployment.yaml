@@ -57,8 +57,12 @@ spec:
             {{- toYaml .Values.resources.nbi | nindent 12 }}
           securityContext:
             runAsUser: 1200
+    {{- if .Values.priorityClass.create }}
       priorityClassName: noc-nbi
-      serviceAccountName: noc-service-account
+    {{- end }}
+    {{- if .Values.rbac.create }}
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+    {{- end}}
       terminationGracePeriodSeconds: 30
       {{- with .Values.service_config.global.nbi.nodeSelector }}
       nodeSelector:

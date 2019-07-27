@@ -53,7 +53,9 @@ spec:
             - mountPath: /etc/nginx
               name: {{ .Release.Name }}-static-nginx-configmap
               readOnly: true
+    {{- if .Values.priorityClass.create }}
       priorityClassName: noc-nginx
+    {{- end }}
       volumes:
         - configMap:
             items:
@@ -67,7 +69,9 @@ spec:
                 path: mime.types
             name: {{ .Release.Name }}-static-nginx-configmap
           name: {{ .Release.Name }}-static-nginx-configmap
-      serviceAccountName: noc-service-account
+    {{- if .Values.rbac.create }}
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+    {{- end}}
       {{- with .Values.service_config.global.static.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

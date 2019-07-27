@@ -62,8 +62,12 @@ spec:
             {{- toYaml $root.Values.resources.discovery | nindent 12 }}
           securityContext:
             runAsUser: 1200
+    {{- if $root.Values.priorityClass.create }}
       priorityClassName: noc-discovery
-      serviceAccountName: noc-service-account
+    {{- end }}
+    {{- if $root.Values.rbac.create }}
+      serviceAccountName: {{ $root.Values.serviceAccount.name }}
+    {{- end}}
       terminationGracePeriodSeconds: 30
       {{- with $pool_info.discovery.nodeSelector }}
       nodeSelector:

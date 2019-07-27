@@ -65,11 +65,15 @@ spec:
           #   capabilities:
           #     add:
           #       - NET_RAW
+    {{- if $root.Values.priorityClass.create }}
       priorityClassName: noc-ping
+    {{- end }}
       #  @todo investigate how to set NET_RAW for python script
       # securityContext:
       #   runAsUser: 1200
-      serviceAccountName: noc-service-account
+    {{- if $root.Values.rbac.create }}
+      serviceAccountName: {{ $root.Values.serviceAccount.name }}
+    {{- end}}
       terminationGracePeriodSeconds: 30
       {{- with $pool_info.ping.nodeSelector }}
       nodeSelector:

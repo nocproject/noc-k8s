@@ -1,34 +1,10 @@
----
-apiVersion: scheduling.k8s.io/v1
-kind: PriorityClass
-metadata:
-  name: noc-consul
-value: 1200000
-globalDefault: false
-description: "This priority class for consul"
----
-apiVersion: scheduling.k8s.io/v1
-kind: PriorityClass
-metadata:
-  name: noc-postgres
-value: 1000000
-globalDefault: false
-description: "This priority class for noc postgres"
----
-apiVersion: scheduling.k8s.io/v1
-kind: PriorityClass
-metadata:
-  name: noc-mongo
-value: 1000005
-globalDefault: false
-description: "This priority class for noc mongodb"
-
+{{- if .Values.priorityClass.create }}
 ---
 apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: noc-activator
-value: 1000005
+value: {{.Values.priorityClass.classValue.activator | int }}
 globalDefault: false
 description: "This priority class for noc activator"
 ---
@@ -36,7 +12,7 @@ apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: noc-bi
-value: 900000
+value: {{.Values.priorityClass.classValue.bi | int}}
 globalDefault: false
 description: "This priority class for noc bi"
 ---
@@ -44,7 +20,7 @@ apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: noc-card
-value: 1000005
+value: {{.Values.priorityClass.classValue.card | int}}
 globalDefault: false
 description: "This priority class for noc card"
 ---
@@ -52,7 +28,7 @@ apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: noc-chwriter
-value: 1000005
+value: {{.Values.priorityClass.classValue.chwriter | int}}
 globalDefault: false
 description: "This priority class for noc chwriter"
 ---
@@ -60,7 +36,7 @@ apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: noc-classifier
-value: 1000005
+value: {{.Values.priorityClass.classValue.classifier | int}}
 globalDefault: false
 description: "This priority class for noc classifier"
 ---
@@ -68,7 +44,7 @@ apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: noc-correlator
-value: 1000005
+value: {{.Values.priorityClass.classValue.correlator | int}}
 globalDefault: false
 description: "This priority class for noc correlator"
 ---
@@ -76,7 +52,7 @@ apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: noc-datasource
-value: 1000005
+value: {{.Values.priorityClass.classValue.datasource | int}}
 globalDefault: false
 description: "This priority class for noc datasource"
 ---
@@ -84,7 +60,7 @@ apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: noc-datastream
-value: 1000005
+value: {{.Values.priorityClass.classValue.datastream | int}}
 globalDefault: false
 description: "This priority class for noc datastream"
 ---
@@ -92,7 +68,7 @@ apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: noc-escalator
-value: 1000005
+value: {{.Values.priorityClass.classValue.escalator | int}}
 globalDefault: false
 description: "This priority class for noc escalator"
 ---
@@ -100,7 +76,7 @@ apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: noc-grafanads
-value: 1000005
+value: {{.Values.priorityClass.classValue.grafanads | int}}
 globalDefault: false
 description: "This priority class for noc grafanads"
 ---
@@ -108,7 +84,7 @@ apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: noc-login
-value: 1000005
+value: {{.Values.priorityClass.classValue.login | int}}
 globalDefault: false
 description: "This priority class for noc login"
 ---
@@ -116,7 +92,7 @@ apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: noc-mailsender
-value: 1000005
+value: {{.Values.priorityClass.classValue.mailsender | int}}
 globalDefault: false
 description: "This priority class for noc mailsender"
 ---
@@ -124,7 +100,7 @@ apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: noc-mib
-value: 500000
+value: {{.Values.priorityClass.classValue.mib | int}}
 globalDefault: false
 description: "This priority class for noc mib"
 ---
@@ -132,7 +108,7 @@ apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: noc-mrt
-value: 1000005
+value: {{.Values.priorityClass.classValue.mrt | int}}
 globalDefault: false
 description: "This priority class for noc mrt"
 ---
@@ -140,7 +116,7 @@ apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: noc-nbi
-value: 1000005
+value: {{.Values.priorityClass.classValue.nbi | int}}
 globalDefault: false
 description: "This priority class for noc nbi"
 ---
@@ -148,7 +124,7 @@ apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: noc-sae
-value: 1000005
+value: {{.Values.priorityClass.classValue.sae | int}}
 globalDefault: false
 description: "This priority class for noc sae"
 ---
@@ -156,7 +132,7 @@ apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: noc-scheduler
-value: 1000005
+value: {{.Values.priorityClass.classValue.scheduler | int}}
 globalDefault: false
 description: "This priority class for noc scheduler"
 ---
@@ -164,7 +140,7 @@ apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: noc-selfmon
-value: 1000005
+value: {{.Values.priorityClass.classValue.selfmon | int}}
 globalDefault: false
 description: "This priority class for noc selfmon"
 ---
@@ -172,7 +148,7 @@ apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: noc-syslogcollector
-value: 1000005
+value: {{.Values.priorityClass.classValue.syslogcollector | int}}
 globalDefault: false
 description: "This priority class for noc syslogcollector"
 ---
@@ -180,7 +156,7 @@ apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: noc-tgsender
-value: 1000005
+value: {{.Values.priorityClass.classValue.tgsender | int}}
 globalDefault: false
 description: "This priority class for noc tgsender"
 ---
@@ -188,7 +164,7 @@ apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: noc-trapcollector
-value: 1000005
+value: {{.Values.priorityClass.classValue.trapcollector | int}}
 globalDefault: false
 description: "This priority class for noc trapcollector"
 ---
@@ -196,7 +172,7 @@ apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: noc-web
-value: 1000005
+value: {{.Values.priorityClass.classValue.web | int}}
 globalDefault: false
 description: "This priority class for noc web"
 ---
@@ -204,7 +180,7 @@ apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: noc-discovery
-value: 1000005
+value: {{.Values.priorityClass.classValue.discovery | int}}
 globalDefault: false
 description: "This priority class for noc discovery"
 ---
@@ -212,7 +188,7 @@ apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: noc-ping
-value: 1000005
+value: {{.Values.priorityClass.classValue.ping | int}}
 globalDefault: false
 description: "This priority class for noc ping"
 ---
@@ -220,6 +196,7 @@ apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: noc-nginx
-value: 1000005
+value: {{.Values.priorityClass.classValue.nginx | int}}
 globalDefault: false
 description: "This priority class for noc nginx"
+{{- end }}
