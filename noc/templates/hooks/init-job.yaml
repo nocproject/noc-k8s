@@ -36,6 +36,8 @@ spec:
                 name: {{ .Release.Name }}-noc-configmap
             - secretRef:
                 name: {{ .Release.Name }}-noc-secret
+            - secretRef:
+                name: {{ .Release.Name }}-noc-init-admin-secret
           image: "{{ .Values.image.repository }}/code:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           name: db-init

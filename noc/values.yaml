@@ -161,6 +161,10 @@ nocExtraConfiguration: |
 noc_web:
   address: noc-k8s.getnoc.com
   tls_secretName: noc-k8s.getnoc.com-tls
+  # will not be changed. Only for initial setup
+  # initial user name is admin
+  initial_admin_password: admin
+  initial_admin_email: test@example.com
 
 clickhouse:
   enabled: true
