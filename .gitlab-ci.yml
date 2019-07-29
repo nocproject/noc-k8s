@@ -11,7 +11,9 @@ Start K3S:
     DK: docker-compose -p ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID}
     DR: ${DK} run client
   script:
+    - ${DK} pull
     - ${DK} up -d server
+    - sleep 10
     - ${DR} kubectl apply -f overlays/k3s/volumes
     - ${DR} kubectl apply -f tiller.yaml
     - ${DR} helm init --service-account tiller --history-max 1 --upgrade --wait
