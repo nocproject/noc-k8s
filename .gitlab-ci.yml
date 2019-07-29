@@ -24,4 +24,4 @@ Start K3S:
     expire_in: 1 hours
 
 after_script:
-  - docker-compose -p ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID} rm -v
+  - docker-compose -p ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID} down -v
