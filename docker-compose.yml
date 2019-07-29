@@ -26,6 +26,7 @@ services:
     image: registry.getnoc.com/infrastructure/kubetools:master
     hostname: client
     command: sleep 10
+    working_dir: /apps
     environment:
       KUBECONFIG: /output/kubeconfig.yaml
     volumes:
