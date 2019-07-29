@@ -9,7 +9,7 @@ Start K3S:
   stage: start
   variables:
     DK: docker-compose -p ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID}
-    DR: ${DK} client run
+    DR: ${DK} run client
   script:
     - ${DK} up -d server
     - ${DR} kubectl apply -f overlays/k3s/volumes
