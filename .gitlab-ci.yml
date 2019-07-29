@@ -12,7 +12,7 @@ Start K3S:
   stage: start
   variables:
     DK: docker-compose -p ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID}
-    DR: ${DK} run client
+    DR: docker-compose -p ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID} run client
   script:
     - ${DK} pull
     - ${DK} up -d server
