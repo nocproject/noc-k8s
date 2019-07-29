@@ -1,34 +1,34 @@
 stages:
   - start
-  - pre
   - deploy
-  - test
   - post
 variables:
   DOCKER_COMPOSE_PROJECT: ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID}
 
-before_script:
-  - docker-compose up -d
+Start K3S:
+  stage: start
+  script:
+    - docker-compose up -d -f ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID}
+  tags:
+    - shell
+  artifacts:
+    paths:
+      - kubeconfig.yaml
+    expire_in: 1 hours
 
-add_storage:
+Prepare and Deploy NOC:
   image: registry.getnoc.com/infrastructure/kubetools:master
-  stage: pre
+  stage: deploy
+  variables:
+    KUBECONFIG: kubeconfig.yaml
   script:
     - kubectl apply -f overlays/k3s/volumes
-  tags:
-    - docker
-test:
-  stage: test
-  image: alpine/helm:latest
-  script:
     - kubectl apply -f tiller.yaml
     - helm init --service-account tiller --history-max 1 --upgrade --wait
-
     - helm upgrade --wait --install --atomic noc noc/
-  after_script:
-    - helm delete --purge noc
   tags:
     - docker
 
+
 after_script:
-  - docker-compose rm -v
+  - docker-compose rm -v -f ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID}
