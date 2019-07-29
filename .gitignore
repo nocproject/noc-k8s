@@ -2,3 +2,4 @@ privs/
 .idea
 old
 data/
+kubeconfig.yaml
