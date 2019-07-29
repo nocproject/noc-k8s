@@ -16,11 +16,11 @@ Start K3S:
   script:
     - ${DK} pull
     - ${DK} up -d server
-    - sleep 30
+    - sleep 10
     - ${DR} kubectl apply -f overlays/k3s/volumes
     - ${DR} kubectl apply -f tiller.yaml
     - ${DR} helm init --service-account tiller --history-max 1 --upgrade --wait
-    - ${DR} helm upgrade --wait --install --atomic noc noc/
+    - ${DR} helm upgrade --wait  --timeout 900 --install --atomic noc noc/
   tags:
     - shell
   artifacts:
