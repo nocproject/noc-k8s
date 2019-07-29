@@ -13,7 +13,7 @@ Start K3S:
   script:
     - ${DK} pull
     - ${DK} up -d server
-    - sleep 10
+    - sleep 30
     - ${DR} kubectl apply -f overlays/k3s/volumes
     - ${DR} kubectl apply -f tiller.yaml
     - ${DR} helm init --service-account tiller --history-max 1 --upgrade --wait
