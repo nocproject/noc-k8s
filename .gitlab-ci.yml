@@ -1,0 +1,34 @@
+stages:
+  - start
+  - pre
+  - deploy
+  - test
+  - post
+variables:
+  DOCKER_COMPOSE_PROJECT: ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID}
+
+before_script:
+  - docker-compose up -d
+
+add_storage:
+  image: registry.getnoc.com/infrastructure/kubetools:master
+  stage: pre
+  script:
+    - kubectl apply -f overlays/k3s/volumes
+  tags:
+    - docker
+test:
+  stage: test
+  image: alpine/helm:latest
+  script:
+    - kubectl apply -f tiller.yaml
+    - helm init --service-account tiller --history-max 1 --upgrade --wait
+
+    - helm upgrade --wait --install --atomic noc noc/
+  after_script:
+    - helm delete --purge noc
+  tags:
+    - docker
+
+after_script:
+  - docker-compose rm -v
