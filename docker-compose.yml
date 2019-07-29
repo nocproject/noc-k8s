@@ -1,23 +1,33 @@
 version: '2.4'
 volumes:
   k3s-server: {}
+  kubeconfig: {}
 services:
   server:
     image: rancher/k3s:v0.7.0
     hostname: k3s
-    command: server --node-label pool=default
+    command: server --bind-address server --node-label pool=default
     tmpfs:
       - /run
       - /var/run
     environment:
-      - K3S_CLUSTER_SECRET=somethingtotallyrandom
-      - K3S_KUBECONFIG_OUTPUT=/output/kubeconfig.yaml
-      - K3S_KUBECONFIG_MODE=666
+      K3S_CLUSTER_SECRET: somethingtotallyrandom
+      K3S_KUBECONFIG_OUTPUT: /output/kubeconfig.yaml
+      K3S_KUBECONFIG_MODE: 666
     privileged: true
     volumes:
       - k3s-server:/var/lib/rancher/k3s
-    # This is just so that we get the kubeconfig file out
-      - .:/output
+      - kubeconfig:/output
     ports:
       - 6443:6443
       - 1443:443
+
+  client:
+    image: registry.getnoc.com/infrastructure/kubetools:master
+    hostname: client
+    command: sleep 10
+    environment:
+      KUBECONFIG: /output/kubeconfig.yaml
+    volumes:
+      - kubeconfig:/output
+      - .:/apps

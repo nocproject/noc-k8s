@@ -7,28 +7,21 @@ variables:
 
 Start K3S:
   stage: start
+  variables:
+    DK: docker-compose -p ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID}
+    DR: ${DK} client run
   script:
-    - docker-compose -p ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID} up -d
+    - ${DK} up -d server
+    - ${DR} kubectl apply -f overlays/k3s/volumes
+    - ${DR} kubectl apply -f tiller.yaml
+    - ${DR} helm init --service-account tiller --history-max 1 --upgrade --wait
+    - ${DR} helm upgrade --wait --install --atomic noc noc/
   tags:
     - shell
   artifacts:
     paths:
       - kubeconfig.yaml
     expire_in: 1 hours
-
-Prepare and Deploy NOC:
-  image: registry.getnoc.com/infrastructure/kubetools:master
-  stage: deploy
-  variables:
-    KUBECONFIG: kubeconfig.yaml
-  script:
-    - kubectl apply -f overlays/k3s/volumes
-    - kubectl apply -f tiller.yaml
-    - helm init --service-account tiller --history-max 1 --upgrade --wait
-    - helm upgrade --wait --install --atomic noc noc/
-  tags:
-    - docker
-
 
 after_script:
   - docker-compose -p ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID} rm -v
