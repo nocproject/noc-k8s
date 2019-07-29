@@ -8,7 +8,7 @@ variables:
 Start K3S:
   stage: start
   script:
-    - docker-compose up -d -f ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID}
+    - docker-compose -p ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID} up -d
   tags:
     - shell
   artifacts:
@@ -31,4 +31,4 @@ Prepare and Deploy NOC:
 
 
 after_script:
-  - docker-compose rm -v -f ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID}
+  - docker-compose -p ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID} rm -v
