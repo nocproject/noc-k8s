@@ -28,5 +28,5 @@ Start K3S:
       - kubeconfig.yaml
     expire_in: 1 hours
 
-after_script:
-  - docker-compose -p ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID} down -v
+#after_script:
+#  - docker-compose -p ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID} down -v
