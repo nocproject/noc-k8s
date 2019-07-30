@@ -1,0 +1,9 @@
+# Mitigate https://github.com/kubernetes/kubernetes/issues/3312
+nocInitContainer:
+  initContainers:
+  - name: sleeper
+    image: alpine:3.10
+    command:
+    - '/bin/sh'
+    - '-c'
+    - sleep $(($RANDOM % 60))
