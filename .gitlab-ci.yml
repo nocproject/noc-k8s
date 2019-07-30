@@ -6,7 +6,7 @@ variables:
   DOCKER_COMPOSE_PROJECT: ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID}
 
 before_script:
-  - rm /home/gitlab-runner/.docker/config.json
+  - rm /home/gitlab-runner/.docker/config.json || true
   - docker-compose -p ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID} down -v
 
 Start K3S:
@@ -30,5 +30,4 @@ Start K3S:
     expire_in: 1 hours
 
 after_script:
-  - sleep 1800
   - docker-compose -p ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID} down -v
