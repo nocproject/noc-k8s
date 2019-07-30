@@ -6,4 +6,4 @@ nocInitContainer:
     command:
     - '/bin/sh'
     - '-c'
-    - sleep $(($RANDOM % 350))
+    - sleep $(($RANDOM % 450))
