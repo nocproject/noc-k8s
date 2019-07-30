@@ -6,6 +6,7 @@ variables:
   DOCKER_COMPOSE_PROJECT: ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID}
 
 before_script:
+  - rm /home/gitlab-runner/.docker/config.json
   - docker-compose -p ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID} down -v
 
 Start K3S:
