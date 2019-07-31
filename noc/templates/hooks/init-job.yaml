@@ -42,12 +42,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           name: db-init
           resources:
-            limits:
-              cpu: 1
-              memory: 250Mi
-            requests:
-              cpu: 1
-              memory: 250Mi
+            {{- toYaml .Values.resources.web | nindent 12 }}
           securityContext:
             runAsUser: 1200
           volumeMounts:
