@@ -21,7 +21,7 @@ Start K3S:
     - ${DR} kubectl apply -f overlays/k3s/volumes
     - ${DR} kubectl apply -f tiller.yaml
     - ${DR} helm init --service-account tiller --history-max 1 --upgrade --wait
-    - ${DR} helm upgrade --wait  --timeout 1200 --install --atomic noc noc/ --values noc/.slow_ci.yaml
+    - ${DR} helm upgrade --wait  --timeout 1200 --install --atomic noc noc/
   tags:
     - shell
   artifacts:
