@@ -4,7 +4,7 @@ volumes:
   kubeconfig: {}
 services:
   server:
-    image: rancher/k3s:v0.7.0
+    image: rancher/k3s:v0.8.1
     hostname: k3s
     command: server --bind-address server --node-label pool=default --kubelet-arg serialize-image-pulls=true
     tmpfs:
