@@ -14,17 +14,10 @@
 export KUBECONFIG=$PWD/privs/config
 ```
 
-* (Optional) install and init tiller. Probably it is already done. but in case 
-it is not
-``` 
-kubectl apply -f tiller.yaml
-helm init --service-account tiller --history-max 1 --upgrade
-```
-
 * copy `noc/values.yaml` to `noc/my_values.yaml`  edit it 
 and than install noc with 
 ```
-helm upgrade --install --atomic noc noc --values my_values.yaml
+helm3 upgrade --install --atomic noc noc --values noc/my_values.yaml --set image.pullPolicy=Always
 ```
 
 Be aware that now for dev purpose there are noc-k8s.getnoc.com tls secret 

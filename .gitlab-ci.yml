@@ -9,7 +9,7 @@ before_script:
   - rm /home/gitlab-runner/.docker/config.json || true
   - docker-compose -p ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID} down -v
 
-Start K3S:
+k3s_helm2:
   stage: start
   variables:
     DK: docker-compose -p ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID}
@@ -22,6 +22,27 @@ Start K3S:
     - ${DR} kubectl apply -f tiller.yaml
     - ${DR} helm init --service-account tiller --history-max 1 --upgrade --wait
     - ${DR} helm upgrade --wait  --timeout 1200 --install --atomic noc noc/
+  tags:
+    - shell
+  artifacts:
+    paths:
+      - kubeconfig.yaml
+    expire_in: 1 hours
+
+k3s_helm3:
+  stage: start
+  variables:
+    DK: docker-compose -p ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID}
+    DR: docker-compose -p ${CI_COMMIT_REF_SLUG}-${CI_JOB_ID} run client
+  script:
+    - ${DK} pull
+    - ${DK} up -d server
+    - sleep 10
+    - ${DR} kubectl apply -f overlays/k3s/volumes
+    - ${DR} helm3 upgrade \
+      --install --debug --atomic noc noc \
+      --set image.tag=master-dev \
+      --set image.pullPolicy=Always
   tags:
     - shell
   artifacts:

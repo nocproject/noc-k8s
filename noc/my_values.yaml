@@ -1,0 +1,113 @@
+service_config:
+  global:
+    bi:
+      count: 0
+      nodeSelector: {}
+      affinity: {}
+    card:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    chwriter:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    datasource:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    datastream:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    escalator:
+      count: 0
+      nodeSelector: {}
+      affinity: {}
+    front:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    grafanads:
+      count: 0
+      nodeSelector: {}
+      affinity: {}
+    login:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    mailsender:
+      count: 0
+      nodeSelector: {}
+      affinity: {}
+    mib:
+      count: 0
+      nodeSelector: {}
+      affinity: {}
+    mrt:
+      count: 0
+      nodeSelector: {}
+      affinity: {}
+    nbi:
+      count: 0
+      nodeSelector: {}
+      affinity: {}
+    sae:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    scheduler:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    static:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    selfmon:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+    tgsender:
+      count: 0
+      nodeSelector: {}
+      affinity: {}
+    web:
+      count: 1
+      nodeSelector: {}
+      affinity: {}
+  pools:
+    default:
+      description: "Default pool"
+      activator:
+        count: 1
+        nodeSelector:
+          pool: default
+        affinity: {}
+      classifier:
+        count: 0
+        nodeSelector: {}
+        affinity: {}
+      correlator:
+        count: 0
+        nodeSelector: {}
+        affinity: {}
+      discovery:
+        count: 1
+        nodeSelector: {}
+        affinity: {}
+      ping:
+        count: 1
+        nodeSelector:
+          pool: default
+        affinity: {}
+      syslogcollector:
+        count: 0
+        nodeSelector:
+          pool: default
+        affinity: {}
+      trapcollector:
+        count: 0
+        nodeSelector:
+          pool: default
+        affinity: {}
