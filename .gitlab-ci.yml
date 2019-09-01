@@ -39,10 +39,7 @@ k3s_helm3:
     - ${DK} up -d server
     - sleep 10
     - ${DR} kubectl apply -f overlays/k3s/volumes
-    - ${DR} helm3 upgrade \
-      --install --debug --atomic noc noc \
-      --set image.tag=master-dev \
-      --set image.pullPolicy=Always
+    - ${DR} helm3 upgrade --install --debug --atomic noc noc --set image.tag=master-dev --set image.pullPolicy=Always
   tags:
     - shell
   artifacts:
