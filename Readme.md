@@ -13,8 +13,14 @@
 # auth info
 export KUBECONFIG=$PWD/privs/config
 ```
+* Noc relies on label `pool` to deploy some pods to. That label should be set for example with. 
+do not use it in production
 
-* copy `noc/values.yaml` to `noc/my_values.yaml`  edit it 
+```
+kubectl label nodes --all pool=default --overwrite
+```
+
+* set options from `noc/values.yaml` to your `noc/my_values.yaml` 
 and than install noc with 
 ```
 helm3 upgrade --install --atomic noc noc --values noc/my_values.yaml --set image.pullPolicy=Always
