@@ -25,5 +25,5 @@ dependencies:
     condition: postgresql.enabled
 
   - name: grafana
-    version: 3.5.12
+    version: 3.8.15
     repository: "@stable"
