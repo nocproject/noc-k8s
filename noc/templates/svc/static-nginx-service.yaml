@@ -12,6 +12,7 @@ spec:
       port: 80
       protocol: TCP
       targetPort: http
+  externalTrafficPolicy: local
   selector:
     service: static
     app.kubernetes.io/name: {{ include "noc.name" . }}
