@@ -48,7 +48,7 @@ spec:
             - containerPort: 4151
               name: http
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.resources.nsqd | nindent 12 }}
           volumeMounts:
             - mountPath: /data
               name: {{ include "nsqd.nsqd.fullname" . }}-datadir
