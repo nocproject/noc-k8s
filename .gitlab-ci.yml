@@ -20,6 +20,7 @@ k3s_helm3:
     - sleep 10
     - ${DR} kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
     - ${DR} kubectl label nodes --all pool=default
+    - ${DR} helm3 dependencies build noc/
     - ${DR} helm3 upgrade --wait --timeout 1200s --install --debug --atomic noc noc --set image.tag=master-dev --set image.pullPolicy=Always
   tags:
     - shell
