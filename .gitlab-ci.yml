@@ -19,6 +19,7 @@ k3s_helm3:
     - ${DK} up -d server
     - sleep 10
     - ${DR} kubectl apply -f overlays/k3s/volumes
+    - ${DR} kubectl label nodes --all pool=default
     - ${DR} helm3 upgrade --wait --timeout 1200s --install --debug --atomic noc noc --set image.tag=master-dev --set image.pullPolicy=Always
   tags:
     - shell

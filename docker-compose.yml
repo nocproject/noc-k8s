@@ -6,7 +6,7 @@ services:
   server:
     image: rancher/k3s:v0.8.1
     hostname: k3s
-    command: server --bind-address server --node-label pool=default --kubelet-arg serialize-image-pulls=true
+    command: server --bind-address server --kubelet-arg serialize-image-pulls=true
     tmpfs:
       - /run
       - /var/run
