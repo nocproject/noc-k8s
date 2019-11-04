@@ -3,3 +3,32 @@ appVersion: "19.3.1"
 description: A Helm chart for Kubernetes
 name: noc
 version: 0.2.1
+dependencies:
+  - name: consul
+    version: 0.8.1
+    repository: "file://charts/consul-helm"
+    condition: consul.enabled
+
+  - name: clickhouse
+    version: 0.1.0
+    repository: "file://charts/clickhouse"
+    condition: clickhouse.enabled
+
+  - name: nsqd
+    version: 0.1.0
+    repository: "file://charts/nsqd"
+    condition: nsqd.enabled
+
+  - name: mongodb
+    version: 7.4.4
+    repository: "@stable"
+    condition: mongodb.enabled
+
+  - name: postgresql
+    version: 6.5.5
+    repository: "@stable"
+    condition: postgresql.enabled
+
+  - name: grafana
+    version: 4.0.1
+    repository: "@stable"

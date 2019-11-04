@@ -188,9 +188,13 @@ nsqd:
 
 postgresql:
   enabled: true
-  postgresUser: noc
-  postgresPassword: noc
-  postgresDatabase: noc
+  postgresqlUsername: noc
+  postgresqlPassword: noc
+  postgresqlDatabase: noc
+  pgHbaConfiguration: |-
+    local all all trust
+    host all all localhost trust
+    host noc noc 0.0.0.0/0 password
   persistence:
     size: 1Gi
 
@@ -219,7 +223,6 @@ consul:
 
 mongodb:
   enabled: true
-  tag: 4.0.10-debian-9-r53
   mongodbRootPassword: noc
   mongodbUsername: noc
   mongodbPassword: noc
