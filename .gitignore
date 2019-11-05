@@ -3,4 +3,4 @@ privs/
 old
 data/
 kubeconfig.yaml
-noc/charts/.*tgz
+noc/charts/*.tgz
