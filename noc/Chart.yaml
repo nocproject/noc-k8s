@@ -6,17 +6,17 @@ version: 0.2.1
 dependencies:
   - name: consul
     version: 0.8.1
-    repository: "file://charts/consul-helm"
+    repository: "file://subcharts/consul-helm"
     condition: consul.enabled
 
   - name: clickhouse
     version: 0.1.0
-    repository: "file://charts/clickhouse"
+    repository: "file://subcharts/clickhouse"
     condition: clickhouse.enabled
 
   - name: nsqd
     version: 0.1.0
-    repository: "file://charts/nsqd"
+    repository: "file://subcharts/nsqd"
     condition: nsqd.enabled
 
   - name: mongodb
